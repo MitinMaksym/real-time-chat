@@ -66,7 +66,7 @@ const ChatInput = props => {
                 }
               }}
               placeholder="Введите текст сообщения"
-              autoSize={{ minRows: 2, maxRows: 8 }}
+              autoSize={{ minRows: 1, maxRows: 8 }}
               allowClear={true}
               value={value}
               onKeyUp={handleSendMessage}
