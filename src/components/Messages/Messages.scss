@@ -1,0 +1,18 @@
+.chat__dialog-messages {
+  background: url("../../assets/img/fon9.jpg") no-repeat center center;
+  background-size: cover;
+
+  .messages {
+    overflow: auto;
+
+    padding: 20px;
+    padding-bottom: 0px;
+    height: 100%;
+    &--loading {
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      overflow: auto;
+    }
+  }
+}

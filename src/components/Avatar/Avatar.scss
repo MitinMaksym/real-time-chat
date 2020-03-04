@@ -1,0 +1,18 @@
+.avatar {
+        $self:&;
+        
+        
+        &--symbol {
+        border-radius: 50%;
+        width: 100%;
+        height: 100%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-weight: 600;
+        line-height: 38px;
+        font-size: 18px;  
+
+        }
+}

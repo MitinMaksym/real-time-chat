@@ -1,0 +1,97 @@
+.chat-input {
+  margin: 20px;
+  position: relative;
+
+  & > div:first-of-type {
+    display: flex;
+  }
+
+  &__smile-btn {
+    margin-right: 15px;
+    cursor: pointer;
+
+    i.anticon {
+      margin-top: 5px;
+    }
+  }
+
+  .ant-btn-circle {
+    i.anticon {
+      cursor: pointer;
+      font-size: 20px;
+    }
+  }
+  &__emoji-picker {
+    position: absolute;
+    bottom: 50px;
+    z-index: 1;
+  }
+  &__record-status {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex: 1;
+    color: #f56b6b;
+
+    .stop-recording {
+      margin-left: 5px;
+      i {
+        svg {
+          position: relative;
+          top: -1px;
+          height: 13px;
+          width: 13px;
+        }
+      }
+    }
+
+    &-bubble {
+      position: relative;
+      display: inline-block;
+      height: 10px;
+      width: 10px;
+      background-color: #f56b6b;
+      border-radius: 30px;
+
+      margin-right: 5px;
+
+      &:before {
+        content: "";
+        position: absolute;
+        left: 0;
+        top: 0;
+        height: 10px;
+        width: 10px;
+        background-color: rgba(245, 107, 107, 0.5);
+        border-radius: 30px;
+        animation: wave-animation 1s ease-in-out infinite;
+        transition: transform 0.15s ease-in-out;
+      }
+    }
+  }
+  &__actions {
+    width: 80px;
+    display: flex;
+    justify-content: space-between;
+    margin-left: 10px;
+    align-items: center;
+  }
+
+  input {
+    &:focus {
+      box-shadow: none;
+    }
+  }
+}
+
+@keyframes wave-animation {
+  0% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.5);
+  }
+  100% {
+    transform: scale(1);
+  }
+}

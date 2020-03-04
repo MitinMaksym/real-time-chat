@@ -1,0 +1,232 @@
+@import "../../styles/variables";
+
+.message {
+  $self: &;
+  width: 100%;
+
+  &__content {
+    display: flex;
+    width: 220;
+    margin-bottom: 20px;
+    position: relative;
+
+    &:hover {
+      #{$self}__icon-actions {
+        display: block;
+      }
+    }
+  }
+
+  &__avatar {
+    display: flex;
+    flex-direction: column-reverse;
+    .avatar {
+      border-radius: 50px;
+      width: 33px;
+      height: 33px;
+      margin-right: 13px;
+      margin-bottom: 5px;
+      font-size: 12px;
+    }
+  }
+
+  &__bubble {
+    max-width: 400px;
+    background: #184cbd91;
+    box-shadow: 0px 5px 5px rgba(54, 116, 255, 0.1);
+    border-radius: 12px 12px 12px 0px;
+    padding: 10px;
+    margin-bottom: 8px;
+    border: 1px solid #ececec;
+  }
+
+  &__date {
+    font-size: 12px;
+    opacity: 0.5;
+  }
+
+  &__text {
+    color: #fff;
+    line-height: 20px;
+    word-wrap: break-word;
+
+    .undefined {
+      img {
+        width: 2em !important;
+        height: 2em !important;
+      }
+    }
+  }
+
+  &__attachments {
+    display: flex;
+    margin-bottom: 5px;
+
+    &-item {
+      margin-right: 5px;
+      cursor: pointer;
+      img {
+        width: 45px;
+        height: 45px;
+        border-radius: 8px;
+      }
+    }
+  }
+  &__icon {
+    &-actions {
+      display: none;
+      transform: rotate(90deg);
+      position: absolute;
+      left: -31px;
+      top: -5px;
+    }
+    &-readed {
+      position: absolute;
+      bottom: 22px;
+      left: -25px;
+
+      &--no {
+        left: -20px;
+      }
+    }
+  }
+
+  &--is-audio {
+    audio {
+      display: none;
+    }
+    #{$self}__bubble {
+      width: 280px;
+      position: relative;
+      overflow: hidden;
+    }
+    #{$self}__audio {
+      padding: 15px;
+      background-color: #3674ff;
+      border-radius: 12px 12px 0px 12px;
+      width: 250px;
+      overflow: hidden;
+      position: relative;
+      &-info {
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+        position: relative;
+      }
+      &-btn {
+        button {
+          display: flex;
+          cursor: pointer;
+          border: 0;
+          width: 28px;
+          height: 28px;
+          border-radius: 30px;
+          background: #0f3997;
+          img {
+            height: 13px;
+            position: relative;
+            left: 3px;
+          }
+        }
+      }
+      &-duration {
+        color: #fff;
+        font-weight: 500;
+        opacity: 0.5;
+        font-size: 12px;
+      }
+      &-progress {
+        left: 0;
+        top: 0;
+        position: absolute;
+        background-color: #418fff;
+        height: 100%;
+        transition: width 0.3s ease;
+      }
+    }
+  }
+  &--isme {
+    display: flex;
+    flex-direction: row-reverse;
+
+    #{$self}__content {
+      margin-bottom: 15px;
+      flex-direction: row-reverse;
+    }
+
+    #{$self}__info {
+      text-align: left;
+    }
+
+    #{$self}__avatar {
+      img {
+        margin-right: 0;
+        margin-left: 13px;
+      }
+
+      .avatar {
+        margin-left: 13px;
+      }
+    }
+    #{$self}__bubble {
+      background: #aaaaaadb;
+      //border: 1px solid #ececec;
+      box-shadow: 0px 4px 4px rgba(0, 0, 0, 0.1);
+      border-radius: 12px 12px 0px 12px;
+
+      #{$self}__text {
+        color: $black;
+      }
+    }
+  }
+
+  &--is-typing {
+    #{$self}__bubble {
+      background: $message-typing-blue;
+      box-shadow: 0px 5px 5px rgba(54, 116, 255, 0.15);
+      padding: 15px 20px;
+    }
+  }
+
+  &--image {
+    #{$self}__attachments {
+      &-item {
+        img {
+          height: 150px;
+          width: 150px;
+        }
+      }
+    }
+  }
+
+  &__typing {
+    span {
+      height: 8px;
+      width: 8px;
+      border-radius: 50%;
+      background: $message-typing-circle;
+      display: inline-block;
+      margin-right: 8px;
+      animation: wave 1.3s linear infinite;
+
+      &:nth-of-type(2) {
+        animation-delay: -1.1s;
+      }
+      &:nth-of-type(3) {
+        animation-delay: -0.9s;
+      }
+
+      @keyframes wave {
+        0%,
+        60%,
+        100% {
+          transform: initial;
+        }
+
+        30% {
+          transform: translateY(-8px);
+        }
+      }
+    }
+  }
+}

@@ -1,0 +1,93 @@
+@import "../variables";
+.chat {
+  display: flex;
+  background: #e6ebef;
+  height: 100%;
+  max-width: 1140px;
+  margin: 0px auto;
+  box-shadow: 0px 0px 25px rgba(0, 0, 0, 0.04204);
+
+  .ant-empty {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+  }
+
+  &__sidebar {
+    height: 100%;
+    width: 335px;
+    border-right: 1px solid #f7f7f7;
+
+    &-header {
+      display: flex;
+      padding: 20px;
+      justify-content: space-between;
+      height: 57.5px;
+      border-bottom: 1px solid #f7f7f7;
+      margin-bottom: 20px;
+      align-items: center;
+
+      .ant-btn-circle {
+        position: relative;
+        left: 5px;
+      }
+
+      & > div {
+        i {
+          display: inline-block;
+          margin-right: 5px;
+        }
+      }
+    }
+
+    &-dialogs {
+      height: calc(100% - 77.5px);
+
+      .dialogs {
+        height: 100%;
+        &__item {
+          padding: 10px 20px;
+          margin-bottom: 0;
+          cursor: pointer;
+
+          &:hover {
+            background: darken(#f3f7ff, 4);
+            color: black;
+          }
+        }
+      }
+    }
+  }
+
+  &__dialog {
+    flex: 1;
+    position: relative;
+
+    &-header {
+      min-height: 57.5px;
+
+      padding: 12px;
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      border-bottom: 1px solid #f7f7f7;
+
+      .ant-btn-circle {
+        i {
+          font-size: 22px;
+        }
+      }
+
+      &-center {
+        text-align: center;
+      }
+
+      &-username {
+        font-weight: 500;
+        display: block;
+        margin-bottom: 5px;
+      }
+    }
+  }
+}
