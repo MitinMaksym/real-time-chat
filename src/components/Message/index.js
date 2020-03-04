@@ -93,7 +93,7 @@ const Message = ({
       return (
         <div key={item._id} className="message__attachments-item">
           <img
-            src={item.url}
+            src={item.url.replace(/http/, "https")}
             alt={item.filename}
             onClick={() => {
               onShowImage(item.url);

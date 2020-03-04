@@ -137,7 +137,7 @@ const ChatInput = ({
               uid: file._id,
               name: file.filename,
               status: "done",
-              url: file.url
+              url: file.url.replace(/http/, "https")
             };
           }
           return item;
