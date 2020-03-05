@@ -62,6 +62,7 @@ const Messages = ({
     socket.on("SERVER:NEW_MESSAGE", onNewMessage);
     socket.on("SERVER:UPDATE_UNREADED_MESSAGES", updateUnread);
     socket.on("DIALOGS:TYPING", toggleIsTyping);
+    socket.on("SERVER:DELETE_MESSAGE", msg => {});
 
     return () => {
       socket.removeListener("SERVER:NEW_MESSAGE", onNewMessage);

@@ -4,7 +4,7 @@ import "emoji-mart/css/emoji-mart.css";
 import { UploadField } from "@navjobs/upload";
 import { UploadFiles } from "../";
 
-import { Button, Input } from "antd";
+import { Button, Input, Icon } from "antd";
 
 import "./ChatInput.scss";
 
@@ -22,10 +22,10 @@ const ChatInput = props => {
     inputRef,
     handleSendMessage,
     onSendMessage,
-    handleStartRecording,
     isRecording,
     onStopRecording,
-    onRecord
+    onRecord,
+    isLoading
   } = props;
 
   return (
@@ -66,7 +66,7 @@ const ChatInput = props => {
                 }
               }}
               placeholder="Введите текст сообщения"
-              autoSize={{ minRows: 1, maxRows: 8 }}
+              autoSize={{ minRows: 2, maxRows: 8 }}
               allowClear={true}
               value={value}
               onKeyUp={handleSendMessage}
@@ -85,12 +85,17 @@ const ChatInput = props => {
               />
             ) : (
               <div className="chat-input__record-btn">
-                <Button
-                  onClick={onRecord}
-                  type="link"
-                  shape="circle"
-                  icon="audio"
-                />
+                {isLoading ? (
+                  <Icon type="loading" shape="circle" />
+                ) : (
+                  <Button
+                    onClick={onRecord}
+                    type="link"
+                    shape="circle"
+                    icon="audio"
+                    size="large"
+                  />
+                )}
               </div>
             )}
 

@@ -6,6 +6,7 @@ import {
   UPDATE_DIALOG,
   SET_IS_LOADING
 } from "../reduces/dialogs";
+import { REMOVE_MESSAGE } from "../reduces/messages";
 
 const actions = {
   setCurrentDialog: id => ({ type: SET_CURRENT_DIALOG, payload: id }),
@@ -42,6 +43,9 @@ const actions = {
       });
       if (check) {
         dispatch(actions.updateDialog(item.dialog));
+        if (operation === "SERVER:DELETE_MESSAGE") {
+          dispatch({ type: REMOVE_MESSAGE, payload: item._id });
+        }
       }
     }
   },

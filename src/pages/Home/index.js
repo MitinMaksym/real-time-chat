@@ -5,7 +5,6 @@ import { withRouter } from "react-router-dom";
 import { connect } from "react-redux";
 import { dialogsActions, userActions } from "../../redux/actions";
 import "./Home.scss";
-import { Redirect } from "react-router-dom";
 
 function Home(props) {
   let { setCurrentDialog, signOut, isAuth, fullname } = props;
@@ -19,7 +18,6 @@ function Home(props) {
   };
   useEffect(() => {
     return () => {
-      console.log(1);
       props.history.push("/");
     };
   }, []);

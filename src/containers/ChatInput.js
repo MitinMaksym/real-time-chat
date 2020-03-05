@@ -16,6 +16,7 @@ const ChatInput = ({
   attachments
 }) => {
   const [value, setValue] = useState("");
+  const [isLoading, setLoading] = useState(false);
   const [emojiVisible, setEmojiVisible] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   let [isDisabled, setIsDisabled] = useState(false);
@@ -49,20 +50,20 @@ const ChatInput = ({
 
     recorder.ondataavailable = e => {
       const file = new File([e.data], "audio.webm");
-      console.log(e.data);
-      //setLoading(true);
+      setLoading(true);
       filesApi.file(file).then(data => {
-        sendAudio(data.file._id);
+        sendAudio(data.file._id).then(() => {
+          setLoading(false);
+        });
       });
     };
   };
 
   const onError = err => {
-    console.log("The following error occured: " + err);
+    throw new Error(err);
   };
 
   const sendAudio = audioId => {
-    console.log(currentDialogId);
     return sendMessage({
       text: null,
       currentDialogId,
@@ -149,7 +150,9 @@ const ChatInput = ({
   };
   const inputRef = useCallback(
     node => {
+      console.log(value.length);
       if (node) {
+        console.log(node.offsetHeight);
         let margin = 40;
         let elHeight = node.offsetHeight + margin + 93.5;
 
@@ -160,7 +163,7 @@ const ChatInput = ({
         if (el) {
           el.style.height = `calc(100% - ${elHeight}px)`;
           if (value.length === 0 && !attachments.length) {
-            el.style.height = `calc(100% - 185px)`;
+            el.style.height = `calc(100% - 185.5px)`;
           }
         }
       }
@@ -200,6 +203,7 @@ const ChatInput = ({
         handleStartRecording={handleStartRecording}
         onStopRecording={onStopRecording}
         onRecord={onRecord}
+        isLoading={isLoading}
       />
     )
   );

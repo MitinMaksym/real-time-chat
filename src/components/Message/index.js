@@ -3,7 +3,7 @@ import PropTypes from "prop-types";
 import classNames from "classnames";
 
 import convertCurrentTime from "../../utils/helpers/convertCurentTime";
-import isAudio from "../../utils/helpers/isAudio";
+import { isAudio } from "../../utils/helpers/";
 
 import { Popover, Button } from "antd";
 
@@ -32,8 +32,6 @@ const MessageAudio = ({ audioSrc }) => {
   };
 
   useEffect(() => {
-    setTimeout(() => console.log(audioEl.current.duration), 2000);
-
     audioEl.current.addEventListener("playing", () => setIsPlaying(true));
     audioEl.current.addEventListener("ended", () => {
       setIsPlaying(false);
@@ -120,20 +118,20 @@ const Message = ({
     >
       <div className="message__content">
         <IconReaded isMe={isMe} isReaded={readed} />
-        <div className="message__icon-actions">
-          <Popover
-            content={
-              <div>
-                <Button onClick={onRemoveMessage} type="danger">
-                  Удалить сообщение
-                </Button>
-              </div>
-            }
-            trigger="click"
-          >
-            <Button type="link" shape="circle" icon="ellipsis" />
-          </Popover>
-        </div>
+        {isMe && (
+          <div className="message__icon-actions">
+            <Popover
+              content={
+                <div>
+                  <Button onClick={onRemoveMessage}>Удалить сообщение</Button>
+                </div>
+              }
+              trigger="click"
+            >
+              <Button type="link" shape="circle" icon="ellipsis" />
+            </Popover>
+          </div>
+        )}
         <div className="message__avatar">
           <Avatar user={user} />
         </div>

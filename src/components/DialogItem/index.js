@@ -15,7 +15,17 @@ const getMessageTime = create_at => {
     return format(new Date(create_at), "dd.MM.yyyy");
   }
 };
-
+const renderLastMessage = (message, userId) => {
+  let text = "";
+  if (!message.text && message.attachments) {
+    text = "прикрепленный файл";
+  } else {
+    text = message.text;
+  }
+  return (
+    <Emoji text={`${message.user._id === userId ? "Вы: " : ""} ${text}`} />
+  );
+};
 export default function DialogItem({
   _id,
   isMe,
@@ -26,7 +36,6 @@ export default function DialogItem({
   userId
 }) {
   let user = isMe ? partner : author;
-
   return (
     <Link to={`/dialog/${_id}`}>
       <div
@@ -45,22 +54,22 @@ export default function DialogItem({
               <span>{getMessageTime(new Date(lastMessage.createdAt))}</span>
             )}
           </div>
-          <div className="dialogs__item-info-bottom">
-            {lastMessage && lastMessage.text && (
-              <p>{<Emoji text={lastMessage.text} />}</p>
-            )}
-            {lastMessage && (
+          {lastMessage && (
+            <div className="dialogs__item-info-bottom">
+              <p>{renderLastMessage(lastMessage, userId)}</p>
+
               <IconReaded
                 isMe={userId === lastMessage.user._id}
                 isReaded={lastMessage.readed}
               />
-            )}
-            {lastMessage.user._id !== userId && lastMessage.readed === false && (
-              <div className="dialogs__item-info-bottom-count">
-                <Icon type="mail" />
-              </div>
-            )}
-          </div>
+
+              {lastMessage.user._id !== userId && lastMessage.readed === false && (
+                <div className="dialogs__item-info-bottom-count">
+                  <Icon type="mail" />
+                </div>
+              )}
+            </div>
+          )}
         </div>
       </div>
     </Link>

@@ -1,11 +1,6 @@
 import { messagesApi } from "../../utils/api";
 import { dialogsActions } from "./index";
-import {
-  SET_ITEMS,
-  ADD_MESSAGE,
-  REMOVE_MESSAGE,
-  SET_IS_LOADING
-} from "../reduces/messages";
+import { SET_ITEMS, ADD_MESSAGE, SET_IS_LOADING } from "../reduces/messages";
 
 const actions = {
   setMessages: items => ({ type: SET_ITEMS, payload: items }),
@@ -61,13 +56,10 @@ const actions = {
     }
   },
   removeMessageById: id => async dispatch => {
-    let data = await messagesApi.removeMessageById(id);
-    if (data.status === "success") {
-      dispatch({ type: REMOVE_MESSAGE, payload: id });
-    }
+    await messagesApi.removeMessageById(id);
   },
   sendMessage: ({ text, currentDialogId, attachments }) => dispatch => {
-    messagesApi.sendMessage({ text, currentDialogId, attachments });
+    return messagesApi.sendMessage({ text, currentDialogId, attachments });
   },
   setIsLoading: bool => {
     return { type: SET_IS_LOADING, payload: bool };

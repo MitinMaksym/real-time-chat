@@ -16,7 +16,7 @@ body {
   transition: opacity 0.15s ease-in-out;
 
   &:hover {
-    opacity: 1;
+    opacity: 1 !important;
   }
 
   &:after {

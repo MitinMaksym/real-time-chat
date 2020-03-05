@@ -16,7 +16,7 @@
 
   &__sidebar {
     height: 100%;
-    width: 335px;
+    min-width: 310px;
     border-right: 1px solid #f7f7f7;
 
     &-header {
@@ -63,6 +63,7 @@
   &__dialog {
     flex: 1;
     position: relative;
+    min-width: 310px;
 
     &-header {
       min-height: 57.5px;

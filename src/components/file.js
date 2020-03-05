@@ -9,8 +9,6 @@ navigator.getUserMedia =
   navigator.msGetUserMedia ||
   navigator.webkitGetUserMedia;
 if (navigator.getUserMedia) {
-  console.log("ok");
-
   start.addEventListener("click", function() {
     var constraints = { audio: true };
     navigator.getUserMedia(constraints, onSuccess, onError);
@@ -24,28 +22,21 @@ if (navigator.getUserMedia) {
     var mediaRecorder = new MediaRecorder(stream);
 
     mediaRecorder.start();
-    console.log(mediaRecorder.state);
-    console.log("recorder started");
     start.disabled = true;
     start.style.color = "red";
 
     stop.onclick = function() {
       mediaRecorder.stop();
-      console.log(mediaRecorder.state);
-      console.log("recorder stopped");
       start.disabled = false;
       start.style.color = "green";
       // mediaRecorder.requestData();
     };
 
-    mediaRecorder.onstop = function(e) {
-      console.log("stopped");
-    };
+    mediaRecorder.onstop = function(e) {};
 
     mediaRecorder.ondataavailable = function(e) {
       var audioURL = window.URL.createObjectURL(e.data);
       audio.src = audioURL;
-      console.log("recorder stopped");
     };
   };
 }
