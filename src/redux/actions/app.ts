@@ -1,8 +1,8 @@
-import { userActions } from "../actions";
+import { userActions } from ".";
 import { INITIALIZED_SUCCESS } from "../reduces/app";
 
 const actions = {
-  initializeApp: () => (dispatch, getState) => {
+  initializeApp: () => (dispatch: any, getState: any): void => {
     let isAuth = getState().user.isAuth;
     if (isAuth) {
       let promise = dispatch(userActions.fetchUserData());

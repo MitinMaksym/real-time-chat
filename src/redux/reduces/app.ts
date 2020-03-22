@@ -1,11 +1,13 @@
 export const INITIALIZED_SUCCESS = "APP:INITIALIZED_SUCCESS";
-
-const initialState = {
+export type InitialStateType = {
+  isInitialized: boolean;
+};
+const initialState: InitialStateType = {
   isInitialized: false
 };
 
-export default (state = initialState, { type, payload }) => {
-  switch (type) {
+export default (state = initialState, action: any): InitialStateType => {
+  switch (action.type) {
     case INITIALIZED_SUCCESS:
       return {
         ...state,

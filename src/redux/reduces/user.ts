@@ -5,7 +5,7 @@ type DataType = {
   user: UserDataType;
   status: string;
 };
-type InitialStateType = {
+export type InitialStateType = {
   data: null | DataType;
   isAuth: boolean;
 };
