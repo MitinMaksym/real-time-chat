@@ -12,6 +12,11 @@
     "@testing-library/jest-dom": "^4.2.4",
     "@testing-library/react": "^9.3.2",
     "@testing-library/user-event": "^7.1.2",
+    "@types/axios": "^0.14.0",
+    "@types/jest": "^25.1.4",
+    "@types/node": "^13.9.3",
+    "@types/react": "^16.9.25",
+    "@types/react-dom": "^16.9.5",
     "antd": "^3.26.6",
     "axios": "^0.19.2",
     "classnames": "^2.2.6",
@@ -30,7 +35,8 @@
     "redux-thunk": "^2.3.0",
     "reset-css": "^5.0.1",
     "socket.io-client": "^2.3.0",
-    "tinycolor2": "^1.4.1"
+    "tinycolor2": "^1.4.1",
+    "typescript": "^3.8.3"
   },
   "scripts": {
     "predeploy": "npm run build",
