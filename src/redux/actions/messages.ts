@@ -2,21 +2,21 @@ import { MessageType, DialogType } from "./../../types/types";
 import { messagesApi } from "../../utils/api";
 import { dialogsActions } from "./index";
 import { SET_ITEMS, ADD_MESSAGE, SET_IS_LOADING } from "../reduces/messages";
-type setMessagesActionType = {
+type SetMessagesActionType = {
   type: typeof SET_ITEMS;
   payload: Array<MessageType>;
 };
-type setIsLoadingActionType = {
+type SetIsLoadingActionType = {
   type: typeof SET_IS_LOADING;
   payload: boolean;
 };
-type updateMessagesDataType = {
+type UpdateMessagesDataType = {
   dialog: DialogType;
   messages: Array<MessageType>;
 };
 
 const actions = {
-  setMessages: (items: Array<MessageType>): setMessagesActionType => ({
+  setMessages: (items: Array<MessageType>): SetMessagesActionType => ({
     type: SET_ITEMS,
     payload: items
   }),
@@ -41,11 +41,10 @@ const actions = {
     }
   },
 
-  updateUnreadMessages: (data: updateMessagesDataType) => async (
+  updateUnreadMessages: (data: UpdateMessagesDataType) => async (
     dispatch: any,
     getState: any
   ) => {
-    console.log(data);
     let userId = getState().user.data.user._id;
     let currentDialogId = await getState().dialogs.currentDialogId;
 
@@ -86,7 +85,7 @@ const actions = {
       attachments: message.attachments
     });
   },
-  setIsLoading: (bool: boolean): setIsLoadingActionType => {
+  setIsLoading: (bool: boolean): SetIsLoadingActionType => {
     return { type: SET_IS_LOADING, payload: bool };
   }
 };

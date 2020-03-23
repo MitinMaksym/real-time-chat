@@ -32,3 +32,10 @@ export type MessageType = {
   updatedAt: string;
   __v: number;
 };
+
+export type AttachmentType = {
+  uid: string;
+  name: string;
+  status: string;
+  url: string;
+};

@@ -150,9 +150,7 @@ const ChatInput = ({
   };
   const inputRef = useCallback(
     node => {
-      console.log(value.length);
       if (node) {
-        console.log(node.offsetHeight);
         let margin = 40;
         let elHeight = node.offsetHeight + margin + 93.5;
 
