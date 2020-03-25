@@ -1,14 +1,34 @@
 import React, { Fragment } from "react";
 import { Picker } from "emoji-mart";
 import "emoji-mart/css/emoji-mart.css";
+//@ts-ignore
 import { UploadField } from "@navjobs/upload";
+
 import { UploadFiles } from "../";
-
 import { Button, Input, Icon } from "antd";
-
 import "./ChatInput.scss";
+import { AttachmentType } from "../../types/types";
 
-const ChatInput = props => {
+type Props = {
+  value: string;
+  setValue: (value: string) => void;
+  attachments: Array<AttachmentType>;
+  emojiVisible: boolean;
+  isDisabled: boolean;
+  inputRef: any;
+  isRecording: boolean;
+  isLoading: boolean;
+
+  toggleEmoji: () => void;
+  addEmoji: (emoji: any) => void;
+  selectFile: (files: any) => void;
+  removeAttachment: (file: AttachmentType) => void;
+  handleSendMessage: () => void;
+  onSendMessage: () => void;
+  onStopRecording: () => void;
+  onRecord: () => void;
+};
+const ChatInput: React.FC<Props> = props => {
   const {
     value,
     setValue,
@@ -58,7 +78,7 @@ const ChatInput = props => {
             </div>
           ) : (
             <Input.TextArea
-              onChange={e => {
+              onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
                 let re = /^\s/;
                 let check = re.test(e.target.value);
                 if (!check) {
@@ -86,7 +106,7 @@ const ChatInput = props => {
             ) : (
               <div className="chat-input__record-btn">
                 {isLoading ? (
-                  <Icon type="loading" shape="circle" />
+                  <Icon type="loading" />
                 ) : (
                   <Button
                     onClick={onRecord}

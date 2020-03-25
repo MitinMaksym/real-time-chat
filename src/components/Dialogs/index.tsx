@@ -1,20 +1,32 @@
 import React from "react";
+
+import { DialogItem } from "..";
+import "./Dialogs.scss";
+import { DialogType } from "../../types/types";
+
 import orderBy from "lodash/orderBy";
 import { Input } from "antd";
 import { Empty, Spin } from "antd";
 
-import { DialogItem } from "..";
+type Props = {
+  items: Array<DialogType>;
+  userId: string;
+  inputValue: string;
+  isLoading: boolean;
+  currentDialogId: string;
 
-import "./Dialogs.scss";
+  onSearch: (value: string) => void;
+};
 
-export default function Dialogs({
+const Dialogs: React.FC<Props> = ({
   items,
   userId,
   onSearch,
   inputValue,
   isLoading,
   currentDialogId
-}) {
+}) => {
+  console.log(items);
   const Search = Input.Search;
 
   return (
@@ -52,4 +64,6 @@ export default function Dialogs({
       </div>
     </div>
   );
-}
+};
+
+export default Dialogs;

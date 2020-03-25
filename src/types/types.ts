@@ -10,6 +10,7 @@ export type UserDataType = {
   __v: number;
   isOnline: boolean;
   id: string;
+  avatar?: string;
 };
 export type DialogType = {
   _id: string;
@@ -18,7 +19,7 @@ export type DialogType = {
   createdAt: string;
   updatedAt: string;
   __v: string;
-  lastMessage: string;
+  lastMessage: MessageType;
 };
 
 export type MessageType = {

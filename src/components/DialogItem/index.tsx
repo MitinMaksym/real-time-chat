@@ -1,21 +1,27 @@
 import React from "react";
+
+import { IconReaded } from "..";
+import Avatar from "../Avatar";
+
+import { Link } from "react-router-dom";
+import { MessageType, UserDataType } from "../../types/types";
 import classNames from "classnames";
+import isToday from "date-fns/isToday";
 import format from "date-fns/format";
 import { Icon } from "antd";
-import { IconReaded } from "..";
-import isToday from "date-fns/isToday";
-import Avatar from "../Avatar";
-import { Link } from "react-router-dom";
+
 const Render = require("react-emoji-render");
 const Emoji = Render.Emojione;
-const getMessageTime = create_at => {
+
+const getMessageTime = (create_at: Date) => {
   if (isToday(new Date(create_at))) {
     return format(new Date(create_at), "HH:mm");
   } else {
     return format(new Date(create_at), "dd.MM.yyyy");
   }
 };
-const renderLastMessage = (message, userId) => {
+
+const renderLastMessage = (message: MessageType, userId: string) => {
   let text = "";
   if (!message.text && message.attachments) {
     text = "прикрепленный файл";
@@ -26,7 +32,18 @@ const renderLastMessage = (message, userId) => {
     <Emoji text={`${message.user._id === userId ? "Вы: " : ""} ${text}`} />
   );
 };
-export default function DialogItem({
+
+type Props = {
+  key: string;
+  _id: string;
+  isMe: boolean;
+  partner: UserDataType;
+  author: UserDataType;
+  lastMessage: MessageType;
+  currentDialogId: string;
+  userId: string;
+};
+const DialogItem: React.FC<Props> = ({
   _id,
   isMe,
   partner,
@@ -34,8 +51,8 @@ export default function DialogItem({
   author,
   currentDialogId,
   userId
-}) {
-  let user = isMe ? partner : author;
+}) => {
+  let user: UserDataType = isMe ? partner : author;
   return (
     <Link to={`/dialog/${_id}`}>
       <div
@@ -74,4 +91,6 @@ export default function DialogItem({
       </div>
     </Link>
   );
-}
+};
+
+export default DialogItem;

@@ -15,7 +15,7 @@ type SetUserActionType = {
   payload: UserDataType | null;
 };
 
-type fetchLoginPostDataType = {
+type FetchLoginPostDataType = {
   email: string;
   password: string;
 };
@@ -61,7 +61,7 @@ const actions = {
     delete window.localStorage.token;
     dispatch(dialogsActions.setCurrentDialog(null));
   },
-  fetchLoginData: (postData: fetchLoginPostDataType) => async (
+  fetchLoginData: (postData: FetchLoginPostDataType) => async (
     dispatch: any
   ) => {
     try {

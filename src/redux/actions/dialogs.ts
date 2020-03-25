@@ -11,7 +11,7 @@ import { REMOVE_MESSAGE } from "../reduces/messages";
 
 type SetCurrentDialogActionType = {
   type: typeof SET_CURRENT_DIALOG;
-  payload: string;
+  payload: string | null;
 };
 
 type SetItemsActionType = {
@@ -35,7 +35,7 @@ type SetIsLoadingActionType = {
 };
 
 const actions = {
-  setCurrentDialog: (id: string): SetCurrentDialogActionType => ({
+  setCurrentDialog: (id: string | null): SetCurrentDialogActionType => ({
     type: SET_CURRENT_DIALOG,
     payload: id
   }),
