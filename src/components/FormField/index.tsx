@@ -1,9 +1,33 @@
-import React from "react";
+import React, { memo } from "react";
 import { Form, Icon, Input } from "antd";
 
 import { validateField } from "../../utils/helpers";
 
-export default function FormField({
+type FormErrors = {
+  email?: string;
+  password?: string;
+  password_2?: string;
+  fullname?: string;
+};
+
+type TouchedType = {
+  email?: boolean;
+  password?: boolean;
+  password_2?: boolean;
+  fullname?: boolean;
+};
+type Props = {
+  errors: FormErrors;
+  type: string;
+  icon: string;
+  placeholder: string;
+  id: string;
+  touched: TouchedType;
+  handleChange: () => void;
+  handleBlur: () => void;
+};
+
+const FormField: React.FC<Props> = ({
   errors,
   type,
   icon,
@@ -12,9 +36,10 @@ export default function FormField({
   handleBlur,
   id,
   touched
-}) {
+}) => {
   return (
     <Form.Item
+      //@ts-ignore
       help={touched[id] && errors[id]}
       validateStatus={validateField(id, touched, errors)}
       hasFeedback
@@ -30,4 +55,6 @@ export default function FormField({
       />
     </Form.Item>
   );
-}
+};
+
+export default FormField;

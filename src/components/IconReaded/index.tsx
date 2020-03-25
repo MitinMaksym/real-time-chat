@@ -1,12 +1,15 @@
 import React from "react";
-import PropTypes from "prop-types";
 
 import readedSvg from "../../assets/img/readed.svg";
 import noReadedSvg from "../../assets/img/noreaded.svg";
 
 import "./IconReaded.scss";
 
-export default function IconReaded({ isMe, isReaded }) {
+type Props = {
+  isMe: boolean;
+  isReaded: boolean;
+};
+const IconReaded: React.FC<Props> = ({ isMe, isReaded }) => {
   return (
     <div>
       {isMe &&
@@ -25,9 +28,6 @@ export default function IconReaded({ isMe, isReaded }) {
         ))}
     </div>
   );
-}
-
-IconReaded.propTypes = {
-  isReaded: PropTypes.bool,
-  isMe: PropTypes.bool
 };
+
+export default IconReaded;

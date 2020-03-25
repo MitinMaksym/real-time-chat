@@ -1,15 +1,36 @@
 import React from "react";
-import propTypes from "prop-types";
+
+import { Empty, Spin, Modal } from "antd";
+import { Message } from "..";
+
 import classNames from "classnames";
 import find from "lodash/find";
 
-import { Empty, Spin, Modal } from "antd";
-
-import { Message } from "../";
-
 import "./Messages.scss";
+import {
+  MessageType,
+  AttachmentType,
+  DialogType,
+  UserDataType
+} from "../../types/types";
 
-const Messages = ({
+type Props = {
+  items: Array<MessageType>;
+  isLoading: boolean;
+  boxRef: string;
+  currentDialogId: string;
+  userId: string;
+  isTyping: boolean;
+  imageUrl: string | null;
+  showImage: boolean;
+  dialogsItems: Array<DialogType>;
+  attachments: Array<AttachmentType>;
+  removeMessageById: (id: string) => void;
+  setImageUrl: (url: string | null) => void;
+  setShowImage: (value: boolean) => void;
+};
+
+const Messages: React.FC<Props> = ({
   items,
   isLoading,
   boxRef,
@@ -24,9 +45,9 @@ const Messages = ({
   dialogsItems,
   isTyping
 }) => {
-  let currentDialog =
+  let currentDialog: DialogType | undefined =
     dialogsItems && find(dialogsItems, { _id: currentDialogId });
-  let partner;
+  let partner: UserDataType | undefined;
   if (currentDialog) {
     partner =
       currentDialog.partner.id === userId
@@ -52,7 +73,8 @@ const Messages = ({
           <Spin size="large" tip="Загрузка сообщений..." />
         ) : items && !isLoading && currentDialogId ? (
           items.length > 0 ? (
-            items.map(item => {
+            items.map((item: MessageType) => {
+              console.log(item);
               return (
                 <Message
                   key={item._id}
@@ -62,7 +84,9 @@ const Messages = ({
                   isMe={item.user._id === userId}
                   {...item}
                   isTyping={false}
-                  onRemoveMessage={removeMessageById.bind(this, item._id)}
+                  onRemoveMessage={() => {
+                    removeMessageById(item._id);
+                  }}
                   setImageUrl={setImageUrl}
                 />
               );
@@ -73,7 +97,9 @@ const Messages = ({
         ) : (
           <Empty description="Виберите диалог" />
         )}{" "}
-        {isTyping && !isLoading && <Message isTyping={true} user={partner} />}
+        {isTyping && partner && !isLoading && (
+          <Message isTyping={true} user={partner} />
+        )}
       </div>
 
       {imageUrl && (
@@ -83,10 +109,6 @@ const Messages = ({
       )}
     </div>
   );
-};
-
-Messages.propTypes = {
-  className: propTypes.string
 };
 
 export default Messages;

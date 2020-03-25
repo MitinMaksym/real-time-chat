@@ -22,9 +22,27 @@ export type DialogType = {
   lastMessage: MessageType;
 };
 
+export type AttachmentType = {
+  uid: string;
+  name: string;
+  status: string;
+  url: string;
+};
+
+export type AttachmentServerType = {
+  _id: string;
+  filename: string;
+  size: number;
+  ext: string;
+  url: string;
+  user: string;
+  createdAt: string;
+  updatedAt: string;
+};
+
 export type MessageType = {
   readed: boolean;
-  attachments: Array<string>;
+  attachments?: Array<AttachmentServerType>;
   _id: string;
   text: string;
   dialog: DialogType;
@@ -32,11 +50,4 @@ export type MessageType = {
   createdAt: string;
   updatedAt: string;
   __v: number;
-};
-
-export type AttachmentType = {
-  uid: string;
-  name: string;
-  status: string;
-  url: string;
 };

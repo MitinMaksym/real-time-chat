@@ -1,12 +1,13 @@
 import React from "react";
 
 import { DialogItem } from "..";
-import "./Dialogs.scss";
 import { DialogType } from "../../types/types";
 
 import orderBy from "lodash/orderBy";
 import { Input } from "antd";
 import { Empty, Spin } from "antd";
+
+import "./Dialogs.scss";
 
 type Props = {
   items: Array<DialogType>;
@@ -26,7 +27,6 @@ const Dialogs: React.FC<Props> = ({
   isLoading,
   currentDialogId
 }) => {
-  console.log(items);
   const Search = Input.Search;
 
   return (

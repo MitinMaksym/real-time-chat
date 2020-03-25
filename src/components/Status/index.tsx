@@ -3,7 +3,12 @@ import classNames from "classnames";
 
 import "./Status.scss";
 
-export default function Status({ online, fullname }) {
+type Props = {
+  online: boolean;
+  fullname: string;
+};
+
+const Status: React.FC<Props> = ({ online, fullname }) => {
   return (
     <div className="chat__dialog-header-center">
       <b className="chat__dialog-header-username">{fullname}</b>
@@ -13,4 +18,6 @@ export default function Status({ online, fullname }) {
       </div>
     </div>
   );
-}
+};
+
+export default Status;
