@@ -81,4 +81,6 @@ let Sidebar = props => {
     />
   );
 };
-export default withRouter(connect(null, dialogsActions)(Sidebar));
+export default withRouter(
+  connect(state => ({ userId: state.user.data._id }), dialogsActions)(Sidebar)
+);

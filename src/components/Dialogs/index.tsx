@@ -10,8 +10,8 @@ import { Empty, Spin } from "antd";
 import "./Dialogs.scss";
 
 type Props = {
-  items: Array<DialogType>;
   userId: string;
+  items: Array<DialogType>;
   inputValue: string;
   isLoading: boolean;
   currentDialogId: string;

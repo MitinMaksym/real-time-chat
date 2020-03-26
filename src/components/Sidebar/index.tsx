@@ -9,6 +9,7 @@ const { Option } = Select;
 
 type Props = {
   isLoading: boolean;
+  userId: string;
   visible: boolean;
   modalText: string;
   partner: UserDataType;
@@ -26,6 +27,7 @@ type Props = {
 };
 let Sidebar: React.FC<Props> = props => {
   let {
+    userId,
     isLoading,
     visible,
     modalText,
@@ -56,7 +58,7 @@ let Sidebar: React.FC<Props> = props => {
       </div>
 
       <div className="chat__sidebar-dialogs">
-        <Dialogs userId="dfgf9e7079856ccaa8abeef5b" />
+        <Dialogs />
       </div>
       <div>
         <Modal
