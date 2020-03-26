@@ -10,7 +10,7 @@ type SetIsLoadingActionType = {
   type: typeof SET_IS_LOADING;
   payload: boolean;
 };
-type UpdateMessagesDataType = {
+export type UpdateMessagesDataType = {
   dialog: DialogType;
   messages: Array<MessageType>;
 };

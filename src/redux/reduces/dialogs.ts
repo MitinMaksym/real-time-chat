@@ -7,12 +7,12 @@ export const SET_IS_LOADING = "DIALOGS:SET_IS_LOADING";
 
 export type InitialStateType = {
   items: Array<DialogType>;
-  currentDialogId: string | null;
+  currentDialogId: string;
   isLoading: boolean;
 };
 const initialState: InitialStateType = {
   items: [],
-  currentDialogId: null,
+  currentDialogId: "",
   isLoading: false
 };
 

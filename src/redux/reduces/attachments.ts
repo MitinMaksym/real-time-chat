@@ -1,9 +1,10 @@
+import { AttachmentServerType } from "./../../types/types";
 import { AttachmentType } from "../../types/types";
 
 export const SET_ATTACHMENTS = "ATTACHMENTS:SET_ATTACHMENTS";
 export const REMOVE_ATTACHMENT = "ATTACHMENTS:REMOVE_ATTACHMENT";
 export type InitialStateType = {
-  items: Array<AttachmentType>;
+  items: Array<AttachmentServerType>;
 };
 const initialState: InitialStateType = {
   items: []

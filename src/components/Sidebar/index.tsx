@@ -1,4 +1,4 @@
-import React from "react";
+import React, { ChangeEvent } from "react";
 
 import { Dialogs } from "../../containers";
 import { UserDataType } from "../../types/types";
@@ -12,7 +12,7 @@ type Props = {
   userId: string;
   visible: boolean;
   modalText: string;
-  partner: UserDataType;
+  partner: string;
   newMessageText: string;
   users: Array<UserDataType>;
   selectedInputValue: string;
@@ -23,11 +23,10 @@ type Props = {
   onInputSelect: (value: string) => void;
   onInputChange: (value: string) => void;
   onSearch: (value: string) => void;
-  onAddNewMessage: () => void;
+  onAddNewMessage: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
 };
 let Sidebar: React.FC<Props> = props => {
   let {
-    userId,
     isLoading,
     visible,
     modalText,

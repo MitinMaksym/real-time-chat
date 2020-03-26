@@ -9,22 +9,22 @@ import find from "lodash/find";
 import "./Messages.scss";
 import {
   MessageType,
-  AttachmentType,
   DialogType,
-  UserDataType
+  UserDataType,
+  AttachmentServerType
 } from "../../types/types";
 
 type Props = {
   items: Array<MessageType>;
   isLoading: boolean;
-  boxRef: string;
+  boxRef: (node: HTMLDivElement) => void;
   currentDialogId: string;
   userId: string;
   isTyping: boolean;
   imageUrl: string | null;
   showImage: boolean;
   dialogsItems: Array<DialogType>;
-  attachments: Array<AttachmentType>;
+  attachments: Array<AttachmentServerType>;
   removeMessageById: (id: string) => void;
   setImageUrl: (url: string | null) => void;
   setShowImage: (value: boolean) => void;
@@ -45,6 +45,7 @@ const Messages: React.FC<Props> = ({
   dialogsItems,
   isTyping
 }) => {
+  console.log(boxRef);
   let currentDialog: DialogType | undefined =
     dialogsItems && find(dialogsItems, { _id: currentDialogId });
   let partner: UserDataType | undefined;

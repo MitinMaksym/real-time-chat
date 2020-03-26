@@ -24,7 +24,7 @@ type UpdateDialogActionType = {
   payload: DialogType;
 };
 
-type CreateDialogDataActionType = {
+export type CreateDialogDataActionType = {
   partner: string;
   text: string;
 };
@@ -52,7 +52,10 @@ const actions = {
   updateDialog: (dialog: DialogType): UpdateDialogActionType => {
     return { type: UPDATE_DIALOG, payload: dialog };
   },
-  updateDialogs: (data: any) => (dispatch: any, getState: any) => {
+  updateDialogs: (data: {
+    item: DialogType & MessageType;
+    operation: string;
+  }) => (dispatch: any, getState: any) => {
     let state = getState();
 
     if (data.operation === "SERVER:CREATE_DIALOG") {
@@ -81,7 +84,9 @@ const actions = {
       }
     }
   },
-  createDialog: (data: CreateDialogDataActionType) => async (dispatch: any) => {
+  createDialog: (data: CreateDialogDataActionType) => async (
+    dispatch: any
+  ): Promise<any> => {
     try {
       let result: {
         dialog: DialogType;
