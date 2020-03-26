@@ -1,8 +1,9 @@
 import React, { useState, useEffect } from "react";
 
 import { Upload, Modal } from "antd";
+import { UploadFile } from "antd/lib/upload/interface";
 
-function getBase64(file) {
+function getBase64(file: Blob) {
   return new Promise((resolve, reject) => {
     const reader = new FileReader();
     reader.readAsDataURL(file);
@@ -10,16 +11,21 @@ function getBase64(file) {
     reader.onerror = error => reject(error);
   });
 }
-let UploadFiles = ({ attachments, removeAttachment }) => {
-  let [previewVisible, setPreviewVisible] = useState(false);
-  let [previewImage, setPreviewImage] = useState("");
-  let [fileList, setFileList] = useState(attachments);
 
+type Props = {
+  attachments: UploadFile<any>[];
+  removeAttachment: (file: UploadFile<any>) => void;
+};
+
+let UploadFiles: React.FC<Props> = ({ attachments, removeAttachment }) => {
+  let [previewVisible, setPreviewVisible] = useState<boolean>(false);
+  let [previewImage, setPreviewImage] = useState<string>("");
+  let [fileList, setFileList] = useState<UploadFile<any>[]>(attachments);
   let handleCancel = () => {
     setPreviewVisible(false);
   };
 
-  let handlePreview = async file => {
+  let handlePreview = async (file: any) => {
     if (!file.url && !file.preview) {
       file.preview = await getBase64(file.originFileObj);
     }
@@ -27,8 +33,12 @@ let UploadFiles = ({ attachments, removeAttachment }) => {
     setPreviewVisible(true);
   };
 
-  let handleChange = ({ fileList }) => setFileList({ fileList });
-
+  let handleChange = (data: {
+    file: UploadFile<any>;
+    fileList: Array<UploadFile<any>>;
+  }) => {
+    setFileList(data.fileList);
+  };
   useEffect(() => {
     setFileList(attachments);
   }, [attachments]);

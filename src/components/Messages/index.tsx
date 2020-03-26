@@ -74,7 +74,6 @@ const Messages: React.FC<Props> = ({
         ) : items && !isLoading && currentDialogId ? (
           items.length > 0 ? (
             items.map((item: MessageType) => {
-              console.log(item);
               return (
                 <Message
                   key={item._id}

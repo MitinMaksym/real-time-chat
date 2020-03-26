@@ -11,7 +11,7 @@ let Sidebar = props => {
   let [users, setUsers] = useState([]);
   let [newMessageText, setNewMessageText] = useState("");
   let [partner, setPartner] = useState(null);
-  let [selectInputValue, setSelectInputValue] = useState(undefined);
+  let [selectedInputValue, setSelectInputValue] = useState(undefined);
   let showModal = () => {
     setVisible(true);
   };
@@ -76,7 +76,7 @@ let Sidebar = props => {
       onAddNewMessage={onAddNewMessage}
       partner={partner}
       newMessageText={newMessageText}
-      selectInputValue={selectInputValue}
+      selectedInputValue={selectedInputValue}
       onInputChange={onInputChange}
     />
   );

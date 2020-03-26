@@ -7,12 +7,12 @@ import { UploadField } from "@navjobs/upload";
 import { UploadFiles } from "../";
 import { Button, Input, Icon } from "antd";
 import "./ChatInput.scss";
-import { AttachmentType } from "../../types/types";
+import { UploadFile } from "antd/lib/upload/interface";
 
 type Props = {
   value: string;
   setValue: (value: string) => void;
-  attachments: Array<AttachmentType>;
+  attachments: UploadFile<any>[];
   emojiVisible: boolean;
   isDisabled: boolean;
   inputRef: any;
@@ -22,7 +22,7 @@ type Props = {
   toggleEmoji: () => void;
   addEmoji: (emoji: any) => void;
   selectFile: (files: any) => void;
-  removeAttachment: (file: AttachmentType) => void;
+  removeAttachment: (file: UploadFile<any>) => void;
   handleSendMessage: () => void;
   onSendMessage: () => void;
   onStopRecording: () => void;

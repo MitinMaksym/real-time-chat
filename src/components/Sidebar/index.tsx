@@ -1,9 +1,30 @@
 import React from "react";
-import { Button, Icon, Modal, Select, Form, Input } from "antd";
+
 import { Dialogs } from "../../containers";
+import { UserDataType } from "../../types/types";
+
+import { Button, Icon, Modal, Select, Form, Input } from "antd";
+
 const { Option } = Select;
 
-let Sidebar = props => {
+type Props = {
+  isLoading: boolean;
+  visible: boolean;
+  modalText: string;
+  partner: UserDataType;
+  newMessageText: string;
+  users: Array<UserDataType>;
+  selectedInputValue: string;
+
+  showModal: () => void;
+  handleCancel: () => void;
+  handleOk: () => void;
+  onInputSelect: (value: string) => void;
+  onInputChange: (value: string) => void;
+  onSearch: (value: string) => void;
+  onAddNewMessage: () => void;
+};
+let Sidebar: React.FC<Props> = props => {
   let {
     isLoading,
     visible,
@@ -18,7 +39,7 @@ let Sidebar = props => {
     onAddNewMessage,
     partner,
     newMessageText,
-    selectInputValue
+    selectedInputValue
   } = props;
 
   let options = users.map(user => (
@@ -71,7 +92,7 @@ let Sidebar = props => {
                 onSearch={onSearch}
                 filterOption={false}
                 placeholder="Имя пользователя или E-mail"
-                value={selectInputValue}
+                value={selectedInputValue}
               >
                 {options}
               </Select>
