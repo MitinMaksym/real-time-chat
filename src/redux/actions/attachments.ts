@@ -25,7 +25,8 @@ const actions = {
       payload: file
     };
   },
-  upload: (file: any) => async (dispatch: any) => {
+  upload: (file: AttachmentType) => async (dispatch: any) => {
+    console.log(file);
     let data = await filesApi.file(file);
     if (data && data.status === "success") {
       return data.file;

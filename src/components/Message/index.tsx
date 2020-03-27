@@ -40,7 +40,7 @@ const Message: React.FC<Props> = ({
   onRemoveMessage,
   setImageUrl
 }) => {
-  const renderAttachment = (item: any) => {
+  const renderAttachment = (item: AttachmentServerType) => {
     if (item.ext !== "webm") {
       return (
         <div key={item._id} className="message__attachments-item">

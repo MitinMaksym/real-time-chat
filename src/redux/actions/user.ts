@@ -109,8 +109,6 @@ const actions = {
     }
   },
   signUserUp: (postData: SignUpPostDataType) => async (dispatch: any) => {
-    console.log(postData);
-
     try {
       let data = await userApi.signUserUp(postData);
       return data;

@@ -28,6 +28,7 @@ export type AttachmentType = {
   status: string;
   url: string;
   size?: number;
+  type?: string;
 };
 
 export type AttachmentServerType = {

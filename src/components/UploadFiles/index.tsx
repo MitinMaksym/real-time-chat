@@ -1,7 +1,7 @@
 import React, { useState, useEffect } from "react";
 
 import { Upload, Modal } from "antd";
-import { UploadFile } from "antd/lib/upload/interface";
+import { AttachmentType } from "../../types/types";
 
 function getBase64(file: Blob) {
   return new Promise((resolve, reject) => {
@@ -13,14 +13,14 @@ function getBase64(file: Blob) {
 }
 
 type Props = {
-  attachments: UploadFile<any>[];
-  removeAttachment: (file: UploadFile<any>) => void;
+  attachments: Array<AttachmentType>;
+  removeAttachment: (file: AttachmentType) => void;
 };
 
 let UploadFiles: React.FC<Props> = ({ attachments, removeAttachment }) => {
   let [previewVisible, setPreviewVisible] = useState<boolean>(false);
   let [previewImage, setPreviewImage] = useState<string>("");
-  let [fileList, setFileList] = useState<UploadFile<any>[]>(attachments);
+  let [fileList, setFileList] = useState(attachments);
   let handleCancel = () => {
     setPreviewVisible(false);
   };
@@ -34,8 +34,8 @@ let UploadFiles: React.FC<Props> = ({ attachments, removeAttachment }) => {
   };
 
   let handleChange = (data: {
-    file: UploadFile<any>;
-    fileList: Array<UploadFile<any>>;
+    file: AttachmentType;
+    fileList: Array<AttachmentType>;
   }) => {
     setFileList(data.fileList);
   };
@@ -47,10 +47,14 @@ let UploadFiles: React.FC<Props> = ({ attachments, removeAttachment }) => {
       <Upload
         action="https://www.mocky.io/v2/5cc8019d300000980a055e76"
         listType="picture-card"
+        //@ts-ignore
         fileList={fileList}
         onPreview={handlePreview}
-        onChange={handleChange}
-        onRemove={file => {
+        onChange={(data: any) => {
+          handleChange(data);
+        }}
+        //@ts-ignore
+        onRemove={(file: AttachmentType) => {
           removeAttachment(file);
         }}
       ></Upload>{" "}

@@ -1,4 +1,9 @@
-import { MessageType, DialogType } from "./../../types/types";
+import {
+  MessageType,
+  DialogType,
+  AttachmentServerType,
+  AttachmentType
+} from "./../../types/types";
 import { messagesApi } from "../../utils/api";
 import { dialogsActions } from "./index";
 import { SET_ITEMS, ADD_MESSAGE, SET_IS_LOADING } from "../reduces/messages";
@@ -13,6 +18,12 @@ type SetIsLoadingActionType = {
 export type UpdateMessagesDataType = {
   dialog: DialogType;
   messages: Array<MessageType>;
+};
+
+export type SendMessageDataActionType = {
+  text: string;
+  currentDialogId: string;
+  attachments: Array<string>;
 };
 
 const actions = {
@@ -78,7 +89,9 @@ const actions = {
   removeMessageById: (id: string) => async (dispatch: any) => {
     await messagesApi.removeMessageById(id);
   },
-  sendMessage: (message: any) => (dispatch: any) => {
+  sendMessage: (message: SendMessageDataActionType) => (
+    dispatch: any
+  ): Promise<any> => {
     return messagesApi.sendMessage({
       text: message.text,
       currentDialogId: message.currentDialogId,

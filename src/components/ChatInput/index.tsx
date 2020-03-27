@@ -8,23 +8,27 @@ import { UploadFiles } from "../";
 import { Button, Input, Icon } from "antd";
 import "./ChatInput.scss";
 import { UploadFile } from "antd/lib/upload/interface";
+import { AttachmentType } from "../../types/types";
 
 type Props = {
   value: string;
   setValue: (value: string) => void;
-  attachments: UploadFile<any>[];
+  attachments: Array<AttachmentType>;
   emojiVisible: boolean;
   isDisabled: boolean;
-  inputRef: any;
+  inputRef: (node: HTMLInputElement) => void;
   isRecording: boolean;
   isLoading: boolean;
 
   toggleEmoji: () => void;
   addEmoji: (emoji: any) => void;
-  selectFile: (files: any) => void;
-  removeAttachment: (file: UploadFile<any>) => void;
-  handleSendMessage: () => void;
-  onSendMessage: () => void;
+  selectFile: (files: Array<AttachmentType>) => void;
+  removeAttachment: (file: AttachmentType) => void;
+  handleSendMessage: (
+    e: React.KeyboardEvent<HTMLTextAreaElement> &
+      React.MouseEvent<HTMLElement, MouseEvent>
+  ) => void;
+  onSendMessage: (e: React.MouseEvent<HTMLElement, MouseEvent>) => void;
   onStopRecording: () => void;
   onRecord: () => void;
 };
@@ -143,7 +147,5 @@ const ChatInput: React.FC<Props> = props => {
     </Fragment>
   );
 };
-
-ChatInput.propTypes = {};
 
 export default ChatInput;

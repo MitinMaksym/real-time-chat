@@ -45,7 +45,6 @@ const Messages: React.FC<Props> = ({
   dialogsItems,
   isTyping
 }) => {
-  console.log(boxRef);
   let currentDialog: DialogType | undefined =
     dialogsItems && find(dialogsItems, { _id: currentDialogId });
   let partner: UserDataType | undefined;
