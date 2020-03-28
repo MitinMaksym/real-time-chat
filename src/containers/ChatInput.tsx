@@ -144,7 +144,8 @@ const ChatInput: React.FC<Props> = ({
 
   let selectFile = async (files: Array<AttachmentType>) => {
     console.log(files);
-    let uploaded: Array<AttachmentType> = attachments.length ? attachments : [];
+    let uploaded: Array<AttachmentType &
+      AttachmentServerType> = attachments.length ? attachments : [];
     for (let i = 0; i < files.length; i++) {
       const file = files[i];
       let uid: string = Math.floor(Math.random() * 1000).toString();
@@ -163,7 +164,7 @@ const ChatInput: React.FC<Props> = ({
       // eslint-disable-next-line no-loop-func
       await upload(file).then((file: AttachmentServerType) => {
         uploaded = uploaded.map((item: AttachmentType) => {
-          if (item.uid === uid) {
+          if (item.uid === uid && file.url) {
             return {
               uid: file._id,
               name: file.filename,

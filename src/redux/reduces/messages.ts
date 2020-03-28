@@ -1,3 +1,4 @@
+import { ActionsTypes } from "./../actions/messages";
 import { MessageType } from "./../../types/types";
 export const SET_ITEMS = "MESSAGES:SET_ITEMS";
 export const SET_IS_LOADING = "MESSAGES:SET_IS_LOADING";
@@ -13,7 +14,10 @@ const initialState: InitialStateType = {
   isLoading: false
 };
 
-export default (state = initialState, action: any): InitialStateType => {
+export default (
+  state = initialState,
+  action: ActionsTypes
+): InitialStateType => {
   switch (action.type) {
     case SET_ITEMS:
       return {

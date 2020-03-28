@@ -1,3 +1,4 @@
+import { ActionsTypes } from "./../actions/user";
 import { UserDataType } from "./../../types/types";
 export const SET_USER_DATA = "USER:SET_USER_DATA";
 export const SET_IS_AUTH = "USER:SET_IS_AUTH";
@@ -14,11 +15,15 @@ const initialState: InitialStateType = {
   isAuth: window.localStorage.token ? true : false
 };
 
-export default (state = initialState, action: any): InitialStateType => {
+export default (
+  state = initialState,
+  action: ActionsTypes
+): InitialStateType => {
   switch (action.type) {
     case SET_USER_DATA:
       return {
         ...state,
+        //@ts-ignore
         data: action.payload
       };
     case SET_IS_AUTH:

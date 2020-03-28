@@ -1,3 +1,4 @@
+import { AppStateType } from "./../redux/reduces/index";
 export type UserDataType = {
   _id: string;
   confirmed: boolean;
@@ -23,23 +24,23 @@ export type DialogType = {
 };
 
 export type AttachmentType = {
-  uid: string;
-  name: string;
-  status: string;
-  url: string;
+  uid?: string;
+  name?: string;
+  status?: string;
+  url?: string;
   size?: number;
   type?: string;
 };
 
 export type AttachmentServerType = {
-  _id: string;
-  filename: string;
-  size: number;
-  ext: string;
-  url: string;
-  user: string;
-  createdAt: string;
-  updatedAt: string;
+  _id?: string;
+  filename?: string;
+  size?: number;
+  ext?: string;
+  url?: string;
+  user?: string;
+  createdAt?: string;
+  updatedAt?: string;
 };
 
 export type MessageType = {
@@ -53,3 +54,5 @@ export type MessageType = {
   updatedAt: string;
   __v: number;
 };
+
+export type GetStateType = () => AppStateType;

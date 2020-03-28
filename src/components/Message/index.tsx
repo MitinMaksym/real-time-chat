@@ -44,23 +44,28 @@ const Message: React.FC<Props> = ({
     if (item.ext !== "webm") {
       return (
         <div key={item._id} className="message__attachments-item">
-          <img
-            src={item.url.replace(/http/, "https")}
-            alt={item.filename}
-            onClick={() => {
-              onShowImage(item.url);
-            }}
-          />
+          {item.url && (
+            <img
+              src={item.url.replace(/http/, "https")}
+              alt={item.filename}
+              onClick={() => {
+                if (item.url) onShowImage(item.url);
+              }}
+            />
+          )}
         </div>
       );
     } else {
-      return <MessageAudio key={item._id} audioSrc={item.url} />;
+      return (
+        <MessageAudio key={item._id} audioSrc={item.url ? item.url : ""} />
+      );
     }
   };
 
   let onShowImage = (url: string) => {
-    //@ts-ignore
-    setImageUrl(url);
+    if (setImageUrl) {
+      setImageUrl(url);
+    }
   };
   return (
     <div

@@ -21,12 +21,12 @@ type Props = {
   currentDialogId: string;
   userId: string;
   isTyping: boolean;
-  imageUrl: string | null;
+  imageUrl: string;
   showImage: boolean;
   dialogsItems: Array<DialogType>;
   attachments: Array<AttachmentServerType>;
   removeMessageById: (id: string) => void;
-  setImageUrl: (url: string | null) => void;
+  setImageUrl: (url: string) => void;
   setShowImage: (value: boolean) => void;
 };
 
@@ -57,7 +57,7 @@ const Messages: React.FC<Props> = ({
 
   let handleCancel = () => {
     setShowImage(false);
-    setImageUrl(null);
+    setImageUrl("");
   };
   return (
     <div

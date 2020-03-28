@@ -1,3 +1,4 @@
+import { ActionsTypes } from "./../actions/dialogs";
 import { DialogType } from "../../types/types";
 
 export const SET_ITEMS = "DIALOGS:SET_ITEMS";
@@ -16,7 +17,10 @@ const initialState: InitialStateType = {
   isLoading: false
 };
 
-export default (state = initialState, action: any): InitialStateType => {
+export default (
+  state = initialState,
+  action: ActionsTypes
+): InitialStateType => {
   switch (action.type) {
     case SET_ITEMS:
       return {

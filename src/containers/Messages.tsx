@@ -40,11 +40,10 @@ const Messages: React.FC<Props> = ({
   userId,
   dialogsItems
 }) => {
-  let [imageUrl, setImageUrl] = useState<string | null>(null);
+  let [imageUrl, setImageUrl] = useState("");
   let [showImage, setShowImage] = useState(false);
   const [isTyping, setIsTyping] = useState(false);
   let typingTimeoutId: any = null;
-
   const toggleIsTyping = (data: any) => {
     if (data.dialogId === currentDialogId) {
       setIsTyping(true);

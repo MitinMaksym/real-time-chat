@@ -1,3 +1,6 @@
+import { AttachmentServerType } from "./../../types/types";
+import { AppStateType } from "./../reduces/index";
+import { ThunkAction } from "redux-thunk";
 import { filesApi } from "../../utils/api";
 import { SET_ATTACHMENTS, REMOVE_ATTACHMENT } from "../reduces/attachments";
 import { AttachmentType } from "../../types/types";
@@ -12,6 +15,21 @@ type RemoveAttachmentActionType = {
   payload: AttachmentType;
 };
 
+type UploadResponseDataType = {
+  status: string;
+  file: AttachmentServerType;
+};
+
+export type ActionsTypes =
+  | SetAttachmentsActionType
+  | RemoveAttachmentActionType;
+
+type AttachmentsThunkType = ThunkAction<
+  Promise<void>,
+  AppStateType,
+  unknown,
+  ActionsTypes
+>;
 const actions = {
   setAttachments: (files: Array<AttachmentType>): SetAttachmentsActionType => {
     return {
@@ -25,9 +43,9 @@ const actions = {
       payload: file
     };
   },
-  upload: (file: AttachmentType) => async (dispatch: any) => {
-    console.log(file);
-    let data = await filesApi.file(file);
+  //@ts-ignore
+  upload: (file: AttachmentType): AttachmentsThunkType => async dispatch => {
+    let data: UploadResponseDataType = await filesApi.file(file);
     if (data && data.status === "success") {
       return data.file;
     }

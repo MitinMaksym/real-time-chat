@@ -1,3 +1,4 @@
+import { ActionsTypes } from "./../actions/attachments";
 import { AttachmentServerType } from "./../../types/types";
 import { AttachmentType } from "../../types/types";
 
@@ -10,7 +11,10 @@ const initialState: InitialStateType = {
   items: []
 };
 
-export default (state = initialState, action: any): InitialStateType => {
+export default (
+  state = initialState,
+  action: ActionsTypes
+): InitialStateType => {
   switch (action.type) {
     case SET_ATTACHMENTS:
       return {

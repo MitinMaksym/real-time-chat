@@ -1,13 +1,16 @@
-import {
-  MessageType,
-  DialogType,
-  AttachmentServerType,
-  AttachmentType
-} from "./../../types/types";
+import { AppStateType } from "./../reduces/index";
+import { MessageType, DialogType } from "./../../types/types";
 import { messagesApi } from "../../utils/api";
 import { dialogsActions } from "./index";
-import { SET_ITEMS, ADD_MESSAGE, SET_IS_LOADING } from "../reduces/messages";
-type SetMessagesActionType = {
+import {
+  SET_ITEMS,
+  ADD_MESSAGE,
+  SET_IS_LOADING,
+  REMOVE_MESSAGE
+} from "../reduces/messages";
+import { ThunkAction } from "redux-thunk";
+import { SetItemsActionType, UpdateDialogActionType } from "./dialogs";
+export type SetMessagesActionType = {
   type: typeof SET_ITEMS;
   payload: Array<MessageType>;
 };
@@ -20,27 +23,53 @@ export type UpdateMessagesDataType = {
   messages: Array<MessageType>;
 };
 
+export type RemoveMessageActionType = {
+  type: typeof REMOVE_MESSAGE;
+  payload: string;
+};
+
+type AddMessageActionType = {
+  type: typeof ADD_MESSAGE;
+  payload: MessageType;
+};
 export type SendMessageDataActionType = {
   text: string;
   currentDialogId: string;
   attachments: Array<string>;
 };
 
+export type ActionsTypes =
+  | SetMessagesActionType
+  | SetIsLoadingActionType
+  | AddMessageActionType
+  | RemoveMessageActionType
+  | UpdateDialogActionType;
+
+type MessagesThunkType = ThunkAction<
+  Promise<void>,
+  AppStateType,
+  unknown,
+  ActionsTypes
+>;
+
 const actions = {
   setMessages: (items: Array<MessageType>): SetMessagesActionType => ({
     type: SET_ITEMS,
     payload: items
   }),
-  fetchMessages: (id: string) => (dispatch: any) => {
+  fetchMessages: (id: string): MessagesThunkType => async dispatch => {
     dispatch(actions.setIsLoading(true));
     messagesApi.getAllByDialogId(id).then((data: any) => {
       dispatch(actions.setMessages(data.data));
       dispatch(actions.setIsLoading(false));
     });
   },
-  addMessage: (message: MessageType) => (dispatch: any, getState: any) => {
+  addMessage: (message: MessageType): MessagesThunkType => async (
+    dispatch,
+    getState: () => AppStateType
+  ) => {
     let { dialogs } = getState();
-    let userId = getState().user.data.user._id;
+    let userId = getState().user.data ? getState().user.data?.user._id : "";
 
     if (dialogs.currentDialogId === message.dialog._id) {
       dispatch({ type: ADD_MESSAGE, payload: message });
@@ -52,33 +81,33 @@ const actions = {
     }
   },
 
-  updateUnreadMessages: (data: UpdateMessagesDataType) => async (
-    dispatch: any,
-    getState: any
-  ) => {
-    let userId = getState().user.data.user._id;
-    let currentDialogId = await getState().dialogs.currentDialogId;
+  updateUnreadMessages: (
+    data: UpdateMessagesDataType
+  ): MessagesThunkType => async (dispatch, getState: () => AppStateType) => {
+    let state = getState();
+    let userId: string = state.user.data ? state.user.data.user._id : "";
+    let currentDialogId: string = getState().dialogs.currentDialogId;
 
-    let author = data.dialog.author._id;
-    let partner = data.dialog.partner._id;
+    let author: string = data.dialog.author._id;
+    let partner: string = data.dialog.partner._id;
     let hasDialog = userId === partner || userId === author;
 
     if (hasDialog) {
       if (data.dialog && data.dialog._id === currentDialogId) {
-        let currentMessages: any = getState().messages.items.filter(
-          (message: any) => {
+        let currentMessages: Array<MessageType> = getState().messages.items.filter(
+          (message: MessageType) => {
             return (
               message.dialog._id === currentDialogId &&
               message.user._id === userId
             );
           }
         );
-        let check: any = currentMessages.some(
-          (message: any) => message.readed !== true
+        let check: boolean = currentMessages.some(
+          (message: MessageType) => message.readed !== true
         );
         if (check) {
-          await dispatch(actions.setMessages(data.messages));
-          await dispatch(dialogsActions.updateDialog(data.dialog));
+          dispatch(actions.setMessages(data.messages));
+          dispatch(dialogsActions.updateDialog(data.dialog));
         }
         dispatch(dialogsActions.updateDialog(data.dialog));
       } else {
@@ -86,12 +115,12 @@ const actions = {
       }
     }
   },
-  removeMessageById: (id: string) => async (dispatch: any) => {
+  removeMessageById: (id: string): MessagesThunkType => async dispatch => {
     await messagesApi.removeMessageById(id);
   },
-  sendMessage: (message: SendMessageDataActionType) => (
-    dispatch: any
-  ): Promise<any> => {
+  sendMessage: (
+    message: SendMessageDataActionType
+  ): MessagesThunkType => dispatch => {
     return messagesApi.sendMessage({
       text: message.text,
       currentDialogId: message.currentDialogId,

@@ -1,4 +1,7 @@
-import { DialogType, MessageType, UserDataType } from "./../../types/types";
+import { RemoveMessageActionType } from "./messages";
+import { Dispatch } from "redux";
+import { AppStateType } from "./../reduces/index";
+import { DialogType, MessageType } from "./../../types/types";
 import { dialogsApi } from "../../utils/api";
 import { openNotification } from "../../utils/helpers";
 import {
@@ -8,18 +11,20 @@ import {
   SET_IS_LOADING
 } from "../reduces/dialogs";
 import { REMOVE_MESSAGE } from "../reduces/messages";
+import { ThunkAction } from "redux-thunk";
+import { Action } from "redux";
 
-type SetCurrentDialogActionType = {
+export type SetCurrentDialogActionType = {
   type: typeof SET_CURRENT_DIALOG;
-  payload: string | null;
+  payload: string;
 };
 
-type SetItemsActionType = {
+export type SetItemsActionType = {
   type: typeof SET_ITEMS;
   payload: Array<DialogType>;
 };
 
-type UpdateDialogActionType = {
+export type UpdateDialogActionType = {
   type: typeof UPDATE_DIALOG;
   payload: DialogType;
 };
@@ -34,8 +39,22 @@ type SetIsLoadingActionType = {
   payload: boolean;
 };
 
+export type ActionsTypes =
+  | SetCurrentDialogActionType
+  | SetItemsActionType
+  | UpdateDialogActionType
+  | SetIsLoadingActionType
+  | RemoveMessageActionType;
+
+type DialogsThunkType = ThunkAction<
+  Promise<void>,
+  AppStateType,
+  unknown,
+  ActionsTypes
+>;
+
 const actions = {
-  setCurrentDialog: (id: string | null): SetCurrentDialogActionType => ({
+  setCurrentDialog: (id: string): SetCurrentDialogActionType => ({
     type: SET_CURRENT_DIALOG,
     payload: id
   }),
@@ -43,7 +62,7 @@ const actions = {
     type: SET_ITEMS,
     payload: items
   }),
-  fetchDialogs: () => async (dispatch: any) => {
+  fetchDialogs: (): DialogsThunkType => async dispatch => {
     dispatch(actions.setIsLoading(true));
     let data = await dialogsApi.getAll();
     dispatch(actions.setItems(data.data));
@@ -55,12 +74,15 @@ const actions = {
   updateDialogs: (data: {
     item: DialogType & MessageType;
     operation: string;
-  }) => (dispatch: any, getState: any) => {
+  }) => async (
+    dispatch: Dispatch<ActionsTypes>,
+    getState: () => AppStateType
+  ) => {
     let state = getState();
 
     if (data.operation === "SERVER:CREATE_DIALOG") {
       let oldDialogs = state.dialogs.items;
-      let userId: string = state.user.data.user._id;
+      let userId: string = state.user.data ? state.user.data.user._id : "";
       let authorId: string = data.item.author._id;
       let partner: string = data.item.partner._id;
       let check: boolean = userId === partner || userId === authorId;
@@ -84,8 +106,8 @@ const actions = {
       }
     }
   },
-  createDialog: (data: CreateDialogDataActionType) => async (
-    dispatch: any
+  createDialog: (data: CreateDialogDataActionType): DialogsThunkType => async (
+    dispatch
   ): Promise<any> => {
     try {
       let result: {
@@ -95,7 +117,6 @@ const actions = {
         partner: data.partner,
         text: data.text
       });
-      console.log(result);
       return result;
     } catch (err) {
       if (err.response.status === 403) {

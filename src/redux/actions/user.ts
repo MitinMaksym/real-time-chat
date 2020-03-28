@@ -1,9 +1,13 @@
+import { SetMessagesActionType } from "./messages";
+import { AppStateType } from "./../reduces/index";
+import { ThunkAction } from "redux-thunk";
 import { UserDataType } from "./../../types/types";
 import { userApi } from "../../utils/api";
 import { openNotification } from "../../utils/helpers";
 import { dialogsActions, messagesActions } from "./index";
 import { SET_USER_DATA, SET_IS_AUTH } from "../reduces/user";
 import axios from "axios";
+import { SetItemsActionType, SetCurrentDialogActionType } from "./dialogs";
 
 type SetAuthActionType = {
   type: typeof SET_IS_AUTH;
@@ -26,6 +30,19 @@ type SignUpPostDataType = {
   password: string;
 };
 
+export type ActionsTypes =
+  | SetAuthActionType
+  | SetUserActionType
+  | SetItemsActionType
+  | SetMessagesActionType
+  | SetCurrentDialogActionType;
+
+type UsersThunkType = ThunkAction<
+  Promise<void>,
+  AppStateType,
+  unknown,
+  ActionsTypes
+>;
 const actions = {
   setAuth: (payload: boolean): SetAuthActionType => ({
     type: SET_IS_AUTH,
@@ -37,7 +54,7 @@ const actions = {
       payload: data
     };
   },
-  fetchUserData: () => async (dispatch: any) => {
+  fetchUserData: (): UsersThunkType => async dispatch => {
     try {
       const data = await userApi.getUserInfo();
       if (data.data.status === "success") {
@@ -53,17 +70,17 @@ const actions = {
       }
     }
   },
-  signOut: () => async (dispatch: any) => {
+  signOut: (): UsersThunkType => async dispatch => {
     dispatch(actions.setAuth(false));
     dispatch(actions.setUserData(null));
     dispatch(dialogsActions.setItems([]));
     dispatch(messagesActions.setMessages([]));
     delete window.localStorage.token;
-    dispatch(dialogsActions.setCurrentDialog(null));
+    dispatch(dialogsActions.setCurrentDialog(""));
   },
-  fetchLoginData: (postData: FetchLoginPostDataType) => async (
-    dispatch: any
-  ) => {
+  fetchLoginData: (
+    postData: FetchLoginPostDataType
+  ): UsersThunkType => async dispatch => {
     try {
       const data = await userApi.signUserIn(postData);
       if (data.data.status === "success") {
@@ -108,7 +125,9 @@ const actions = {
       }
     }
   },
-  signUserUp: (postData: SignUpPostDataType) => async (dispatch: any) => {
+  signUserUp: (
+    postData: SignUpPostDataType
+  ): UsersThunkType => async dispatch => {
     try {
       let data = await userApi.signUserUp(postData);
       return data;
