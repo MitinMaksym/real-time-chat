@@ -64,7 +64,7 @@ function Home(props) {
 }
 export default withRouter(
   connect(
-    ({ user }) => ({ isAuth: user.isAuth, fullname: user.data.user.fullname }),
+    ({ user }) => ({ isAuth: user.isAuth, fullname: user.data.fullname }),
     {
       ...dialogsActions,
       ...userActions

@@ -3,7 +3,6 @@ import { Dispatch } from "redux";
 import { AppStateType } from "./../reduces/index";
 import { DialogType, MessageType } from "./../../types/types";
 import { dialogsApi } from "../../utils/api";
-import { openNotification } from "../../utils/helpers";
 import {
   SET_CURRENT_DIALOG,
   SET_ITEMS,
@@ -12,7 +11,6 @@ import {
 } from "../reduces/dialogs";
 import { REMOVE_MESSAGE } from "../reduces/messages";
 import { ThunkAction } from "redux-thunk";
-import { Action } from "redux";
 
 export type SetCurrentDialogActionType = {
   type: typeof SET_CURRENT_DIALOG;
@@ -64,8 +62,8 @@ const actions = {
   }),
   fetchDialogs: (): DialogsThunkType => async dispatch => {
     dispatch(actions.setIsLoading(true));
-    let data = await dialogsApi.getAll();
-    dispatch(actions.setItems(data.data));
+    let dialogs = await dialogsApi.getAll();
+    dispatch(actions.setItems(dialogs));
     dispatch(actions.setIsLoading(false));
   },
   updateDialog: (dialog: DialogType): UpdateDialogActionType => {
@@ -82,7 +80,7 @@ const actions = {
 
     if (data.operation === "SERVER:CREATE_DIALOG") {
       let oldDialogs = state.dialogs.items;
-      let userId: string = state.user.data ? state.user.data.user._id : "";
+      let userId: string = state.user.data ? state.user.data._id : "";
       let authorId: string = data.item.author._id;
       let partner: string = data.item.partner._id;
       let check: boolean = userId === partner || userId === authorId;
@@ -103,36 +101,6 @@ const actions = {
         if (data.operation === "SERVER:DELETE_MESSAGE") {
           dispatch({ type: REMOVE_MESSAGE, payload: data.item._id });
         }
-      }
-    }
-  },
-  createDialog: (data: CreateDialogDataActionType): DialogsThunkType => async (
-    dispatch
-  ): Promise<any> => {
-    try {
-      let result: {
-        dialog: DialogType;
-        status: string;
-      } = await dialogsApi.createDialog({
-        partner: data.partner,
-        text: data.text
-      });
-      return result;
-    } catch (err) {
-      if (err.response.status === 403) {
-        openNotification({
-          type: "error",
-          message: "Такой диалог уже существует",
-          description: "",
-          duration: 1
-        });
-      } else {
-        openNotification({
-          type: "error",
-          message: "Ошибка",
-          description: "",
-          duration: 1
-        });
       }
     }
   },

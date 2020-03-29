@@ -120,7 +120,7 @@ let mapDispatchToProps = (state: AppStateType): MapStatePropsType => {
     isLoading: state.messages.isLoading,
     items: state.messages.items,
     attachments: state.attachments.items,
-    userId: state.user.data?.user._id ? state.user.data?.user._id : "",
+    userId: state.user.data ? state.user.data._id : "",
     dialogsItems: state.dialogs.items
   };
 };

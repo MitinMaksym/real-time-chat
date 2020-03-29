@@ -69,7 +69,8 @@ const actions = {
     getState: () => AppStateType
   ) => {
     let { dialogs } = getState();
-    let userId = getState().user.data ? getState().user.data?.user._id : "";
+    let state = getState();
+    let userId = state.user.data ? state.user.data._id : "";
 
     if (dialogs.currentDialogId === message.dialog._id) {
       dispatch({ type: ADD_MESSAGE, payload: message });
@@ -85,7 +86,7 @@ const actions = {
     data: UpdateMessagesDataType
   ): MessagesThunkType => async (dispatch, getState: () => AppStateType) => {
     let state = getState();
-    let userId: string = state.user.data ? state.user.data.user._id : "";
+    let userId: string = state.user.data ? state.user.data._id : "";
     let currentDialogId: string = getState().dialogs.currentDialogId;
 
     let author: string = data.dialog.author._id;
@@ -120,6 +121,7 @@ const actions = {
   },
   sendMessage: (
     message: SendMessageDataActionType
+    //@ts-ignore
   ): MessagesThunkType => dispatch => {
     return messagesApi.sendMessage({
       text: message.text,

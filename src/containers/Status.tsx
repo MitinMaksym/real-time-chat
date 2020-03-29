@@ -41,5 +41,5 @@ export default connect<
 >(({ dialogs, user }) => ({
   currentDialogId: dialogs.currentDialogId,
   dialogs: dialogs.items,
-  userId: user.data ? user.data.user._id : ""
+  userId: user.data ? user.data._id : ""
 }))(Status);

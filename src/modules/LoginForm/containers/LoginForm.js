@@ -18,10 +18,11 @@ const LoginFormContainer = withFormik({
   handleSubmit: async (values, { setSubmitting, props }) => {
     try {
       let data = await store.dispatch(userActions.fetchLoginData(values));
+      console.log(data);
       setSubmitting(false);
       if (data.status === "success") {
         const data = await store.dispatch(userActions.fetchUserData());
-        if (data.data.status === "success") {
+        if (data.status === "success") {
           await store.dispatch({ type: "USER:SET_IS_AUTH", payload: true });
           await store.dispatch({ type: "INITIALIZED_SUCCESS" });
           props.history.push("/");

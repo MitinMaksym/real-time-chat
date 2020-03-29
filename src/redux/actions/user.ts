@@ -19,11 +19,6 @@ type SetUserActionType = {
   payload: UserDataType | null;
 };
 
-type FetchLoginPostDataType = {
-  email: string;
-  password: string;
-};
-
 type SignUpPostDataType = {
   fullname: string;
   email: string;
@@ -54,11 +49,16 @@ const actions = {
       payload: data
     };
   },
-  fetchUserData: (): UsersThunkType => async dispatch => {
+  fetchUserData: (): ThunkAction<
+    Promise<any>,
+    AppStateType,
+    unknown,
+    ActionsTypes
+  > => async dispatch => {
     try {
       const data = await userApi.getUserInfo();
-      if (data.data.status === "success") {
-        dispatch(actions.setUserData(data.data));
+      if (data.status === "success") {
+        dispatch(actions.setUserData(data.user));
         return data;
       }
     } catch (err) {
@@ -78,13 +78,15 @@ const actions = {
     delete window.localStorage.token;
     dispatch(dialogsActions.setCurrentDialog(""));
   },
-  fetchLoginData: (
-    postData: FetchLoginPostDataType
-  ): UsersThunkType => async dispatch => {
+  fetchLoginData: (postData: {
+    email: string;
+    password: string;
+    //@ts-ignore
+  }): UsersThunkType => async dispatch => {
     try {
       const data = await userApi.signUserIn(postData);
-      if (data.data.status === "success") {
-        const { token } = data.data;
+      if (data.status === "success") {
+        const { token } = data;
 
         window.localStorage["token"] = token;
         axios.defaults.headers.common["token"] = token;
@@ -95,10 +97,9 @@ const actions = {
           description: "",
           duration: 1
         });
-        return data.data;
+        return data;
       }
     } catch (err) {
-      console.log(err);
       if (err.response.status === 404) {
         openNotification({
           type: "error",
@@ -120,31 +121,6 @@ const actions = {
           type: "error",
           message: "Ошибка при авторизации",
           description: "Неправильный логин или пароль",
-          duration: 1
-        });
-      }
-    }
-  },
-  signUserUp: (
-    postData: SignUpPostDataType
-  ): UsersThunkType => async dispatch => {
-    try {
-      let data = await userApi.signUserUp(postData);
-      return data;
-    } catch (err) {
-      console.log(err);
-      if (err.response.status === 400) {
-        openNotification({
-          type: "error",
-          message: "Ошибка при регистрации",
-          description: "Такой пользователь уже зарегистрирован",
-          duration: 1
-        });
-      } else {
-        openNotification({
-          type: "error",
-          message: "Server Error",
-          description: "Something went wrong",
           duration: 1
         });
       }

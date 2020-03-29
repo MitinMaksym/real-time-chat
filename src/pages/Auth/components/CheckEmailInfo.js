@@ -47,7 +47,7 @@ export default function CheckEmailInfo(props) {
         .verifyHash(hash)
         .then(async data => {
           setIsLoading(true);
-          if (data.data.status === "success") {
+          if (data.status === "success") {
             setVerified(true);
             setIsLoading(false);
           }

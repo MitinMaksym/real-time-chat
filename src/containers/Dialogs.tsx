@@ -100,7 +100,7 @@ const Dialogs: React.FC<Props> = ({
 let mapStateToProps = (state: AppStateType): MapStatePropsType => ({
   items: state.dialogs.items,
   isLoading: state.dialogs.isLoading,
-  userId: state.user.data ? state.user.data.user._id : "",
+  userId: state.user.data ? state.user.data._id : "",
   currentDialogId: state.dialogs.currentDialogId
 });
 

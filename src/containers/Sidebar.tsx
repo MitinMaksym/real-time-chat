@@ -1,14 +1,15 @@
 import React, { useState } from "react";
 
 import { Sidebar as SidebarBase } from "../components";
-import { userApi } from "../utils/api";
+import { userApi, dialogsApi } from "../utils/api";
 import { dialogsActions } from "../redux/actions";
 import { CreateDialogDataActionType } from "../redux/actions/dialogs";
 import { AppStateType } from "../redux/reduces";
-import { DialogType } from "../types/types";
+import { DialogType, UserDataType } from "../types/types";
 
 import { withRouter, RouteComponentProps } from "react-router-dom";
 import { connect } from "react-redux";
+import { openNotification } from "../utils/helpers";
 
 type OwnPropsType = {};
 
@@ -28,7 +29,7 @@ type Props = OwnPropsType &
 let Sidebar: React.FC<Props> = props => {
   let [visible, setVisible] = useState(false);
   let [isLoading, setIsLoading] = useState(false);
-  let [users, setUsers] = useState([]);
+  let [users, setUsers] = useState<Array<UserDataType>>([]);
   let [newMessageText, setNewMessageText] = useState<string>("");
   let [partner, setPartner] = useState<string>("");
   let [selectedInputValue, setSelectInputValue] = useState("");
@@ -46,14 +47,31 @@ let Sidebar: React.FC<Props> = props => {
     setVisible(false);
     setIsLoading(false);
     setVisible(false);
-    props
-      .createDialog({ text: newMessageText, partner })
-      .then((data: { status: string; dialog: DialogType }) => {
-        console.log(data);
-        if (data && data.status === "success") {
-          props.history.push(`/dialog/${data.dialog._id}`);
-        }
+    try {
+      let data = await dialogsApi.createDialog({
+        partner: partner,
+        text: newMessageText
       });
+      if (data && data.status === "success") {
+        props.history.push(`/dialog/${data.dialog._id}`);
+      }
+    } catch (err) {
+      if (err.response.status === 403) {
+        openNotification({
+          type: "error",
+          message: "Такой диалог уже существует",
+          description: "",
+          duration: 1
+        });
+      } else {
+        openNotification({
+          type: "error",
+          message: "Ошибка",
+          description: "",
+          duration: 1
+        });
+      }
+    }
   };
 
   let handleCancel = () => {
@@ -109,19 +127,12 @@ let Sidebar: React.FC<Props> = props => {
 
 let mapStateToProps = (state: AppStateType): MapStatePropsType => {
   return {
-    userId: state.user.data ? state.user.data.user._id : ""
+    userId: state.user.data ? state.user.data._id : ""
   };
 };
 
-let mapDispatchToProps = (dispatch: any): MapDispatchPropsType => {
-  return {
-    createDialog: (data: CreateDialogDataActionType) =>
-      dispatch(dialogsActions.createDialog(data))
-  };
-};
 export default withRouter(
   connect<MapStatePropsType, MapDispatchPropsType, OwnPropsType, AppStateType>(
-    mapStateToProps,
-    mapDispatchToProps
+    mapStateToProps
   )(Sidebar)
 );

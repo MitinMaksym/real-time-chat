@@ -2,12 +2,9 @@ import { ActionsTypes } from "./../actions/user";
 import { UserDataType } from "./../../types/types";
 export const SET_USER_DATA = "USER:SET_USER_DATA";
 export const SET_IS_AUTH = "USER:SET_IS_AUTH";
-type DataType = {
-  user: UserDataType;
-  status: string;
-};
+
 export type InitialStateType = {
-  data: null | DataType;
+  data: null | UserDataType;
   isAuth: boolean;
 };
 const initialState: InitialStateType = {
