@@ -104,22 +104,12 @@ let mapStateToProps = (state: AppStateType): MapStatePropsType => ({
   currentDialogId: state.dialogs.currentDialogId
 });
 
-let mapDispatchToProps = (dispatch: any) => {
-  return {
-    fetchDialogs: () => dispatch(dialogsActions.fetchDialogs()),
-    updateDialogs: (data: {
-      item: DialogType & MessageType;
-      operation: string;
-    }) => dispatch(dialogsActions.updateDialogs(data))
-  };
-};
-
 export default connect<
   MapStatePropsType,
   MapDispatchPropsType,
   OwnPropsType,
   AppStateType
->(
-  mapStateToProps,
-  mapDispatchToProps
-)(Dialogs);
+>(mapStateToProps, {
+  fetchDialogs: dialogsActions.fetchDialogs,
+  updateDialogs: dialogsActions.updateDialogs
+})(Dialogs);

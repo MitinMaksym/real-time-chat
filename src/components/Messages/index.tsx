@@ -13,6 +13,7 @@ import {
   UserDataType,
   AttachmentServerType
 } from "../../types/types";
+import { messagesActions } from "../../redux/actions";
 
 type Props = {
   items: Array<MessageType>;
@@ -25,7 +26,6 @@ type Props = {
   showImage: boolean;
   dialogsItems: Array<DialogType>;
   attachments: Array<AttachmentServerType>;
-  removeMessageById: (id: string) => void;
   setImageUrl: (url: string) => void;
   setShowImage: (value: boolean) => void;
 };
@@ -36,7 +36,6 @@ const Messages: React.FC<Props> = ({
   boxRef,
   currentDialogId,
   userId,
-  removeMessageById,
   attachments,
   setImageUrl,
   showImage,
@@ -84,7 +83,7 @@ const Messages: React.FC<Props> = ({
                   {...item}
                   isTyping={false}
                   onRemoveMessage={() => {
-                    removeMessageById(item._id);
+                    messagesActions.removeMessageById(item._id);
                   }}
                   setImageUrl={setImageUrl}
                 />

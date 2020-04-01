@@ -1,6 +1,6 @@
 import tinycolor from "tinycolor2";
 
-const getCorrectIndex = index => {
+const getCorrectIndex = (index: string) => {
   return index.charCodeAt(0) > 255
     ? 255
     : index.charCodeAt(0) < 0
@@ -8,7 +8,7 @@ const getCorrectIndex = index => {
     : index.charCodeAt(0);
 };
 
-const createAvatarFromHash = hash => {
+const createAvatarFromHash = (hash: string) => {
   const [r, g, b] = hash
     .substr(11, 14)
     .split("")

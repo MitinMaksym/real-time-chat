@@ -43,12 +43,10 @@ const actions = {
       payload: file
     };
   },
-  //@ts-ignore
-  upload: (file: AttachmentType): AttachmentsThunkType => async dispatch => {
+
+  upload: async (file: File): Promise<UploadResponseDataType> => {
     let data: UploadResponseDataType = await filesApi.file(file);
-    if (data && data.status === "success") {
-      return data.file;
-    }
+    return data;
   }
 };
 

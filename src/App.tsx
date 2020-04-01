@@ -5,7 +5,21 @@ import { Spin, Result } from "antd";
 
 import { appActions } from "./redux/actions";
 import { Auth, Home } from "./pages";
-function App(props) {
+import { AppStateType } from "./redux/reduces";
+
+type MapStatePropsType = {
+  isInitialized: boolean;
+  isAuth: boolean;
+};
+
+type MapDisptchPropsType = {
+  initializeApp: () => void;
+};
+
+type OwnPropsType = {};
+
+type Props = MapStatePropsType & MapDisptchPropsType & OwnPropsType;
+let App: React.FC<Props> = props => {
   let { isAuth, initializeApp, isInitialized } = props;
   useEffect(() => {
     initializeApp();
@@ -51,11 +65,17 @@ function App(props) {
       </Switch>
     </div>
   );
-}
-export default connect(
-  ({ user, app }) => ({
-    isAuth: user.isAuth,
-    isInitialized: app.isInitialized
-  }),
-  appActions
-)(App);
+};
+
+let mapStateToProps = (state: AppStateType): MapStatePropsType => {
+  return {
+    isAuth: state.user.isAuth,
+    isInitialized: state.app.isInitialized
+  };
+};
+export default connect<
+  MapStatePropsType,
+  MapDisptchPropsType,
+  OwnPropsType,
+  AppStateType
+>(mapStateToProps, { initializeApp: appActions.initializeApp })(App);

@@ -8,7 +8,8 @@ type Props = {
   fullname: string;
 };
 
-const Status: React.FC<Props> = ({ online, fullname }) => {
+const Status: React.FC<Props> = props => {
+  let { online, fullname } = props;
   return (
     <div className="chat__dialog-header-center">
       <b className="chat__dialog-header-username">{fullname}</b>

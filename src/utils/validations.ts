@@ -1,25 +1,37 @@
-export default ({ isAuth, errors, values }) => {
+import { RegisterFormValues } from "./../modules/RegisterForm/containers/RegisterForm";
+import { LoginFormValues } from "../modules/LoginForm/containers/LoginForm";
+import { FormikErrors } from "formik";
+
+type ValidateFuncParamsTypes = {
+  isAuth: boolean;
+  errors: FormikErrors<LoginFormValues & RegisterFormValues>;
+  values: LoginFormValues & RegisterFormValues;
+};
+
+type ValidateFuncType = (params: ValidateFuncParamsTypes) => void;
+
+let validateFunc: ValidateFuncType = ({ isAuth, errors, values }) => {
   const rules = {
-    email: value => {
+    email: (value: string) => {
       if (!value) {
         errors.email = "Введите почту";
       } else if (!/^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,4}$/i.test(value)) {
         errors.email = "Неправильный адресс почты";
       }
     },
-    password: value => {
+    password: (value: string) => {
       if (!value) {
         errors.password = "Введите пароль";
       } else if (value.length < 6) {
         !isAuth && (errors.password = "Слишком лёгкий пароль");
       }
     },
-    password_2: value => {
+    password_2: (value: string) => {
       if (value !== values.password) {
         errors.password_2 = "Пароли не совпадают";
       }
     },
-    fullname: value => {
+    fullname: (value: string) => {
       if (!value) {
         errors.fullname = "Введите ваше имя";
       } else if (value.length < 4) {
@@ -28,5 +40,10 @@ export default ({ isAuth, errors, values }) => {
     }
   };
 
-  Object.keys(values).forEach(key => rules[key] && rules[key](values[key]));
+  Object.keys(values).forEach(
+    //@ts-ignore
+    (key: string) => rules[key] && rules[key](values[key])
+  );
 };
+
+export default validateFunc;

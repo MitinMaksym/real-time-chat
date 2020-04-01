@@ -23,7 +23,6 @@ type MapStatePropsType = {
 type MapDispatchPropsType = {
   fetchMessages: (id: string) => void;
   addMessage: (message: MessageType) => void;
-  removeMessageById: (id: string) => void;
   updateUnreadMessages: (data: UpdateMessagesDataType) => void;
 };
 
@@ -34,7 +33,6 @@ const Messages: React.FC<Props> = ({
   currentDialogId,
   isLoading,
   addMessage,
-  removeMessageById,
   updateUnreadMessages,
   attachments,
   userId,
@@ -102,7 +100,6 @@ const Messages: React.FC<Props> = ({
       items={items}
       isLoading={isLoading}
       currentDialogId={currentDialogId}
-      removeMessageById={removeMessageById}
       attachments={attachments}
       setImageUrl={setImageUrl}
       showImage={showImage}
@@ -114,7 +111,7 @@ const Messages: React.FC<Props> = ({
     />
   );
 };
-let mapDispatchToProps = (state: AppStateType): MapStatePropsType => {
+let mapStateToProps = (state: AppStateType): MapStatePropsType => {
   return {
     currentDialogId: state.dialogs.currentDialogId,
     isLoading: state.messages.isLoading,
@@ -129,9 +126,8 @@ export default connect<
   MapDispatchPropsType,
   OwnPropsType,
   AppStateType
->(mapDispatchToProps, {
+>(mapStateToProps, {
   fetchMessages: messagesActions.fetchMessages,
   addMessage: messagesActions.addMessage,
-  removeMessageById: messagesActions.removeMessageById,
   updateUnreadMessages: messagesActions.updateUnreadMessages
 })(Messages);

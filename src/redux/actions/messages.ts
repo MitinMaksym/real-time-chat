@@ -9,15 +9,18 @@ import {
   REMOVE_MESSAGE
 } from "../reduces/messages";
 import { ThunkAction } from "redux-thunk";
-import { SetItemsActionType, UpdateDialogActionType } from "./dialogs";
+import { UpdateDialogActionType } from "./dialogs";
+
 export type SetMessagesActionType = {
   type: typeof SET_ITEMS;
   payload: Array<MessageType>;
 };
+
 type SetIsLoadingActionType = {
   type: typeof SET_IS_LOADING;
   payload: boolean;
 };
+
 export type UpdateMessagesDataType = {
   dialog: DialogType;
   messages: Array<MessageType>;
@@ -31,11 +34,6 @@ export type RemoveMessageActionType = {
 type AddMessageActionType = {
   type: typeof ADD_MESSAGE;
   payload: MessageType;
-};
-export type SendMessageDataActionType = {
-  text: string;
-  currentDialogId: string;
-  attachments: Array<string>;
 };
 
 export type ActionsTypes =
@@ -59,8 +57,8 @@ const actions = {
   }),
   fetchMessages: (id: string): MessagesThunkType => async dispatch => {
     dispatch(actions.setIsLoading(true));
-    messagesApi.getAllByDialogId(id).then((data: any) => {
-      dispatch(actions.setMessages(data.data));
+    messagesApi.getAllByDialogId(id).then(items => {
+      dispatch(actions.setMessages(items));
       dispatch(actions.setIsLoading(false));
     });
   },
@@ -69,8 +67,8 @@ const actions = {
     getState: () => AppStateType
   ) => {
     let { dialogs } = getState();
-    let state = getState();
-    let userId = state.user.data ? state.user.data._id : "";
+    let state: AppStateType = getState();
+    let userId: string = state.user.data ? state.user.data._id : "";
 
     if (dialogs.currentDialogId === message.dialog._id) {
       dispatch({ type: ADD_MESSAGE, payload: message });
@@ -85,17 +83,17 @@ const actions = {
   updateUnreadMessages: (
     data: UpdateMessagesDataType
   ): MessagesThunkType => async (dispatch, getState: () => AppStateType) => {
-    let state = getState();
+    let state: AppStateType = getState();
     let userId: string = state.user.data ? state.user.data._id : "";
     let currentDialogId: string = getState().dialogs.currentDialogId;
 
     let author: string = data.dialog.author._id;
     let partner: string = data.dialog.partner._id;
-    let hasDialog = userId === partner || userId === author;
+    let hasDialog: boolean = userId === partner || userId === author;
 
     if (hasDialog) {
       if (data.dialog && data.dialog._id === currentDialogId) {
-        let currentMessages: Array<MessageType> = getState().messages.items.filter(
+        let currentMessages: Array<MessageType> = state.messages.items.filter(
           (message: MessageType) => {
             return (
               message.dialog._id === currentDialogId &&
@@ -116,19 +114,10 @@ const actions = {
       }
     }
   },
-  removeMessageById: (id: string): MessagesThunkType => async dispatch => {
-    await messagesApi.removeMessageById(id);
+  removeMessageById: (id: string): void => {
+    messagesApi.removeMessageById(id);
   },
-  sendMessage: (
-    message: SendMessageDataActionType
-    //@ts-ignore
-  ): MessagesThunkType => dispatch => {
-    return messagesApi.sendMessage({
-      text: message.text,
-      currentDialogId: message.currentDialogId,
-      attachments: message.attachments
-    });
-  },
+
   setIsLoading: (bool: boolean): SetIsLoadingActionType => {
     return { type: SET_IS_LOADING, payload: bool };
   }

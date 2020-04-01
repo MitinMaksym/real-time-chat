@@ -6,7 +6,7 @@ import CheckEmailInfo from "./components/CheckEmailInfo";
 
 import "./Auth.scss";
 
-const Auth = () => {
+const Auth: React.FC<{}> = () => {
   return (
     <section className="auth">
       <div className="auth__content">

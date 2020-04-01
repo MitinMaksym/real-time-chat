@@ -1,10 +1,25 @@
-import React, { useEffect, useState } from "react";
+import React, { useEffect, useState, ReactNode } from "react";
 import { Result, Button, Spin } from "antd";
 import { Block } from "../../../components";
 import userApi from "../../../utils/api/user";
 import { Link } from "react-router-dom";
+type RenderTextInfoParamsType = {
+  verified: boolean | null;
+  hash: string;
+  error: boolean;
+};
+type RenderTextInfoType = (
+  params: RenderTextInfoParamsType
+) =>
+  | {
+      status: "success" | "error" | "info" | "warning";
+      title: string;
+      message: string;
+      extra?: JSX.Element[];
+    }
+  | undefined;
 
-let renderTextInfo = ({ verified, hash, loading, error }) => {
+let renderTextInfo: RenderTextInfoType = ({ verified, hash, error }) => {
   if (hash) {
     if (verified) {
       return {
@@ -32,15 +47,18 @@ let renderTextInfo = ({ verified, hash, loading, error }) => {
     };
   }
 };
-
-export default function CheckEmailInfo(props) {
+type Props = {
+  location: Location;
+};
+let CheckEmailInfo: React.FC<Props> = props => {
+  console.log(props);
   const hash = props.location.search.split("?hash=")[1];
 
-  let [verified, setVerified] = useState(null);
+  let [verified, setVerified] = useState<boolean | null>(null);
   let [loading, setIsLoading] = useState(false);
   let [error, setError] = useState(false);
 
-  let info = renderTextInfo({ verified, hash, loading, error });
+  let info = renderTextInfo({ verified, hash, error });
   useEffect(() => {
     if (hash) {
       userApi
@@ -71,4 +89,6 @@ export default function CheckEmailInfo(props) {
       />
     </Block>
   );
-}
+};
+
+export default CheckEmailInfo;

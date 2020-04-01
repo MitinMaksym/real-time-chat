@@ -1,30 +1,19 @@
-import React, { memo } from "react";
+import React, { ChangeEvent, FocusEvent } from "react";
 import { Form, Icon, Input } from "antd";
 
 import { validateField } from "../../utils/helpers";
+import { FormikTouched, FormikErrors } from "formik";
+import { LoginFormValues } from "../../modules/LoginForm/containers/LoginForm";
 
-type FormErrors = {
-  email?: string;
-  password?: string;
-  password_2?: string;
-  fullname?: string;
-};
-
-type TouchedType = {
-  email?: boolean;
-  password?: boolean;
-  password_2?: boolean;
-  fullname?: boolean;
-};
 type Props = {
-  errors: FormErrors;
-  type: string;
+  errors: FormikErrors<LoginFormValues>;
+  type: "password" | "email" | "text";
   icon: string;
   placeholder: string;
-  id: string;
-  touched: TouchedType;
-  handleChange: () => void;
-  handleBlur: () => void;
+  id: "password" | "password_2" | "email" | "fullname";
+  touched: FormikTouched<LoginFormValues>;
+  handleChange: (e: ChangeEvent<any>) => void;
+  handleBlur: (e: FocusEvent<any>) => void;
 };
 
 const FormField: React.FC<Props> = ({

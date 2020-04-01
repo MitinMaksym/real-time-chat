@@ -17,14 +17,7 @@ type MapStatePropsType = {
   userId: string;
 };
 
-type MapDispatchPropsType = {
-  createDialog: (data: CreateDialogDataActionType) => Promise<any>;
-};
-
-type Props = OwnPropsType &
-  MapDispatchPropsType &
-  MapStatePropsType &
-  RouteComponentProps;
+type Props = OwnPropsType & MapStatePropsType & RouteComponentProps;
 
 let Sidebar: React.FC<Props> = props => {
   let [visible, setVisible] = useState(false);
@@ -132,7 +125,7 @@ let mapStateToProps = (state: AppStateType): MapStatePropsType => {
 };
 
 export default withRouter(
-  connect<MapStatePropsType, MapDispatchPropsType, OwnPropsType, AppStateType>(
-    mapStateToProps
-  )(Sidebar)
+  connect<MapStatePropsType, {}, OwnPropsType, AppStateType>(mapStateToProps)(
+    Sidebar
+  )
 );

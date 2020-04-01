@@ -1,12 +1,9 @@
 import React, { useState, useEffect, useCallback } from "react";
 import { ChatInput as ChatInputBase } from "../components";
 import { connect } from "react-redux";
-import messagesActions, {
-  SendMessageDataActionType
-} from "../redux/actions/messages";
 import { attachmentsActions } from "../redux/actions";
 import socket from "../core/socket";
-import { filesApi } from "../utils/api";
+import { filesApi, messagesApi } from "../utils/api";
 import { AttachmentServerType, AttachmentType } from "../types/types";
 import { AppStateType } from "../redux/reduces";
 
@@ -18,8 +15,6 @@ type MapStatePropsType = {
 };
 
 type MapDispatchPropsType = {
-  sendMessage: (data: SendMessageDataActionType) => Promise<any>;
-  upload: (file: AttachmentType) => Promise<any>;
   setAttachments: (files: Array<AttachmentType>) => void;
   removeAttachment: (file: AttachmentType) => void;
 };
@@ -28,9 +23,6 @@ type Props = OwnPropsType & MapDispatchPropsType & MapStatePropsType;
 
 const ChatInput: React.FC<Props> = ({
   currentDialogId,
-
-  sendMessage,
-  upload,
   setAttachments,
   removeAttachment,
   attachments
@@ -76,11 +68,15 @@ const ChatInput: React.FC<Props> = ({
     recorder.ondataavailable = e => {
       const file = new File([e.data], "audio.webm");
       setLoading(true);
-      filesApi.file(file).then(data => {
-        sendAudio(data.file._id).then(() => {
-          setLoading(false);
+      filesApi
+        .file(file)
+        .then((data: { status: string; file: AttachmentServerType }) => {
+          if (data.status === "success" && data.file._id) {
+            sendAudio(data.file._id).then(() => {
+              setLoading(false);
+            });
+          }
         });
-      });
     };
   };
 
@@ -89,7 +85,7 @@ const ChatInput: React.FC<Props> = ({
   };
 
   const sendAudio = (audioId: string): Promise<any> => {
-    return sendMessage({
+    return messagesApi.sendMessage({
       text: "",
       currentDialogId,
       attachments: [audioId]
@@ -99,11 +95,11 @@ const ChatInput: React.FC<Props> = ({
     if (isRecording && mediaRecorder) {
       mediaRecorder.stop();
     } else if (value || attachments.length) {
-      sendMessage({
+      messagesApi.sendMessage({
         text: value,
         currentDialogId,
-        //@ts-ignore
-        attachments: attachments.map(file => file.uid)
+
+        attachments: attachments.map(file => (file.uid ? file.uid : ""))
       });
       setValue("");
       setAttachments([]);
@@ -142,12 +138,11 @@ const ChatInput: React.FC<Props> = ({
   };
   //---------------------FILE
 
-  let selectFile = async (files: Array<AttachmentType>) => {
-    console.log(files);
+  let selectFile = async (files: FileList): Promise<void> => {
     let uploaded: Array<AttachmentType &
       AttachmentServerType> = attachments.length ? attachments : [];
     for (let i = 0; i < files.length; i++) {
-      const file = files[i];
+      let file: File = files[i];
       let uid: string = Math.floor(Math.random() * 1000).toString();
       uploaded = [
         ...uploaded,
@@ -162,19 +157,23 @@ const ChatInput: React.FC<Props> = ({
       setAttachments(uploaded);
       setIsDisabled(true);
       // eslint-disable-next-line no-loop-func
-      await upload(file).then((file: AttachmentServerType) => {
-        uploaded = uploaded.map((item: AttachmentType) => {
-          if (item.uid === uid && file.url) {
-            return {
-              uid: file._id,
-              name: file.filename,
-              status: "done",
-              url: file.url.replace(/http/, "https")
-            };
+      await attachmentsActions
+        .upload(file)
+        .then((data: { file: AttachmentServerType; status: string }) => {
+          if (data.status === "success") {
+            uploaded = uploaded.map((item: AttachmentType) => {
+              if (item.uid === uid && data.file.url) {
+                return {
+                  uid: data.file._id,
+                  name: data.file.filename,
+                  status: "done",
+                  url: data.file.url.replace(/http/, "https")
+                };
+              }
+              return item;
+            });
           }
-          return item;
         });
-      });
     }
     setAttachments(uploaded);
     setIsDisabled(false);
@@ -245,23 +244,12 @@ let mapStateToProps = (state: AppStateType): MapStatePropsType => {
   };
 };
 
-let mapDispatchToProps = (dispatch: any) => {
-  return {
-    sendMessage: (data: SendMessageDataActionType) =>
-      dispatch(messagesActions.sendMessage(data)),
-    upload: (file: AttachmentType) => dispatch(attachmentsActions.upload(file)),
-    setAttachments: (files: Array<AttachmentType>) =>
-      dispatch(attachmentsActions.setAttachments(files)),
-    removeAttachment: (file: any) =>
-      dispatch(attachmentsActions.removeAttachment(file))
-  };
-};
 export default connect<
   MapStatePropsType,
   MapDispatchPropsType,
   OwnPropsType,
   AppStateType
->(
-  mapStateToProps,
-  mapDispatchToProps
-)(ChatInput);
+>(mapStateToProps, {
+  setAttachments: attachmentsActions.setAttachments,
+  removeAttachment: attachmentsActions.removeAttachment
+})(ChatInput);

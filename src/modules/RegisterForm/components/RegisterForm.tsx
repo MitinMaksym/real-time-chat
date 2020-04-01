@@ -1,11 +1,14 @@
 import React from "react";
+
+import { Button, Block, FormField } from "../../../components";
+import { RegisterFormValues } from "../containers/RegisterForm";
+import { FormikProps } from "formik";
+
 import { Form, Icon } from "antd";
 import { Link } from "react-router-dom";
 
-import { Button, Block, FormField } from "../../../components";
-
 const success = false;
-const RegisterForm = props => {
+const RegisterForm = (props: {} & FormikProps<RegisterFormValues>) => {
   const {
     touched,
     errors,

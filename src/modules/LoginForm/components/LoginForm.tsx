@@ -2,11 +2,16 @@ import React from "react";
 
 import { Form } from "antd";
 import { Link } from "react-router-dom";
-import { Redirect } from "react-router-dom";
-
 import { Button, Block, FormField } from "../../../components";
+import { LoginFormValues } from "../containers/LoginForm";
 
-const LoginForm = props => {
+import { Redirect } from "react-router-dom";
+import { FormikProps } from "formik";
+
+interface OtherProps {
+  isAuth: boolean;
+}
+const LoginForm = (props: OtherProps & FormikProps<LoginFormValues>) => {
   const {
     touched,
     errors,

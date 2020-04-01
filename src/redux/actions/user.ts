@@ -32,7 +32,7 @@ export type ActionsTypes =
   | SetMessagesActionType
   | SetCurrentDialogActionType;
 
-type UsersThunkType = ThunkAction<
+export type UsersThunkType = ThunkAction<
   Promise<void>,
   AppStateType,
   unknown,

@@ -7,7 +7,6 @@ import { UploadField } from "@navjobs/upload";
 import { UploadFiles } from "../";
 import { Button, Input, Icon } from "antd";
 import "./ChatInput.scss";
-import { UploadFile } from "antd/lib/upload/interface";
 import { AttachmentType } from "../../types/types";
 
 type Props = {
@@ -22,7 +21,7 @@ type Props = {
 
   toggleEmoji: () => void;
   addEmoji: (emoji: any) => void;
-  selectFile: (files: Array<AttachmentType>) => void;
+  selectFile: (files: FileList) => Promise<void>;
   removeAttachment: (file: AttachmentType) => void;
   handleSendMessage: (
     e: React.KeyboardEvent<HTMLTextAreaElement> &

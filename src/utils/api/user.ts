@@ -14,7 +14,7 @@ type GetUserInfoResType = {
 
 type SignUserUpResType = {
   result: UserDataType;
-  status: string;
+  status: "succes" | "error";
 };
 
 type FindUsersResType = {
@@ -45,7 +45,7 @@ export default {
     return axios
       .post("user/registration", postData)
       .then((res: AxiosResponse<SignUserUpResType>) => {
-        return res;
+        return res.data;
       });
   },
   verifyHash: async (hash: string) => {

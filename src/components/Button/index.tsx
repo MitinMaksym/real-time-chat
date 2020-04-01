@@ -1,13 +1,11 @@
-import React from "react";
+import React, { ButtonHTMLAttributes, FormEvent, MouseEvent } from "react";
 import { Button as BaseButton } from "antd";
 import classnames from "classnames";
 
 import "./Button.scss";
-type Props = {
-  className: string;
-  size: "small" | "large";
-};
-const Button: React.FC<Props> = props => {
+import { ButtonProps } from "antd/lib/button";
+type OwnProps = {};
+const Button: React.FC<OwnProps & ButtonProps> = props => {
   return (
     <BaseButton
       {...props}

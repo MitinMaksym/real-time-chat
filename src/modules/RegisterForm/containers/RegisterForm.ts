@@ -1,10 +1,19 @@
-import RegisterForm from "../components/RegisterForm";
 import { withFormik } from "formik";
-import validateFunc from "./../../../utils/validations";
+import RegisterForm from "../components/RegisterForm";
+import validateFunc from "../../../utils/validations";
 import { userApi } from "../../../utils/api";
 import { openNotification } from "../../../utils/helpers";
 
-export default withFormik({
+export interface RegisterFormValues {
+  email: string;
+  password: string;
+  fullname?: string;
+  password_2?: string;
+}
+
+interface FormProps {}
+
+export default withFormik<FormProps, RegisterFormValues>({
   // Custom sync validation
   mapPropsToValues: () => ({
     email: "",
@@ -21,9 +30,12 @@ export default withFormik({
   handleSubmit: async (values, { setSubmitting, props }) => {
     const { email, password, fullname } = values;
     try {
-      let data = await userApi.signUserUp({ email, password, fullname });
-      if (data.status === "success") {
-        props.history.push("/user/verify");
+      if (fullname) {
+        let data = await userApi.signUserUp({ email, password, fullname });
+        if (data.status !== "error") {
+          //@ts-ignore
+          props.history.push("/user/verify");
+        }
       }
     } catch (err) {
       if (err.response.status === 400) {
