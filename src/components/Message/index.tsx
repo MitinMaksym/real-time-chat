@@ -15,6 +15,7 @@ const Render = require("react-emoji-render");
 const Emoji = Render.Emojione;
 
 type Props = {
+  id?: string;
   key?: string;
   alt?: string;
   createdAt?: string;
@@ -25,10 +26,11 @@ type Props = {
   attachments?: Array<AttachmentServerType>;
   isTyping?: boolean;
   readed?: boolean;
-  onRemoveMessage?: (e: React.MouseEvent<HTMLElement, MouseEvent>) => void;
   setImageUrl?: (url: string) => void;
+  onDeleteMessage?: (id: string) => void;
 };
 const Message: React.FC<Props> = ({
+  id,
   createdAt,
   text,
   user,
@@ -37,8 +39,8 @@ const Message: React.FC<Props> = ({
   attachments,
   isTyping,
   readed,
-  onRemoveMessage,
-  setImageUrl
+  setImageUrl,
+  onDeleteMessage,
 }) => {
   const renderAttachment = (item: AttachmentServerType) => {
     if (item.ext !== "webm") {
@@ -73,17 +75,27 @@ const Message: React.FC<Props> = ({
         "message--isme": isMe,
         "message--is-typing": isTyping,
         "message--image": attachments && attachments.length === 1 && !text,
-        "message--is-audio": isAudio(attachments)
+        "message--is-audio": isAudio(attachments),
       })}
     >
       <div className="message__content">
-        {isMe && readed && <IconReaded isMe={isMe} isReaded={readed} />}
+        {isMe && readed !== undefined && (
+          <IconReaded isMe={isMe} isReaded={readed} />
+        )}
         {isMe && (
           <div className="message__icon-actions">
             <Popover
               content={
                 <div>
-                  <Button onClick={onRemoveMessage}>Удалить сообщение</Button>
+                  <Button
+                    onClick={(e) => {
+                      if (onDeleteMessage && id) {
+                        onDeleteMessage(id);
+                      }
+                    }}
+                  >
+                    Удалить сообщение
+                  </Button>
                 </div>
               }
               trigger="click"
@@ -112,7 +124,7 @@ const Message: React.FC<Props> = ({
           )}
           {attachments && (
             <div className="message__attachments">
-              {attachments.map(item => renderAttachment(item))}
+              {attachments.map((item) => renderAttachment(item))}
             </div>
           )}
           {date && createdAt && (

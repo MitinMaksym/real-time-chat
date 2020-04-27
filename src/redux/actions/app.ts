@@ -19,13 +19,13 @@ const actions = {
     let isAuth = getState().user.isAuth;
     if (isAuth) {
       let promise = dispatch(userActions.fetchUserData());
-      Promise.all([promise]).then(data => {
+      Promise.all([promise]).then((data) => {
         dispatch({ type: INITIALIZED_SUCCESS });
       });
     } else {
       dispatch({ type: INITIALIZED_SUCCESS });
     }
-  }
+  },
 };
 
 export default actions;

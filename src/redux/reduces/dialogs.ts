@@ -5,6 +5,7 @@ export const SET_ITEMS = "DIALOGS:SET_ITEMS";
 export const SET_CURRENT_DIALOG = "DIALOGS:SET_CURRENT_DIALOG";
 export const UPDATE_DIALOG = "DIALOGS:UPDATE_DIALOG";
 export const SET_IS_LOADING = "DIALOGS:SET_IS_LOADING";
+export const ADD_NEW_DIALOG = "ADD_NEW_DIALOG";
 
 export type InitialStateType = {
   items: Array<DialogType>;
@@ -14,7 +15,7 @@ export type InitialStateType = {
 const initialState: InitialStateType = {
   items: [],
   currentDialogId: "",
-  isLoading: false
+  isLoading: false,
 };
 
 export default (
@@ -25,16 +26,21 @@ export default (
     case SET_ITEMS:
       return {
         ...state,
-        items: action.payload
+        items: action.payload,
+      };
+    case ADD_NEW_DIALOG:
+      return {
+        ...state,
+        items: [...state.items, action.payload],
       };
 
     case SET_CURRENT_DIALOG:
       return {
         ...state,
-        currentDialogId: action.payload
+        currentDialogId: action.payload,
       };
     case UPDATE_DIALOG:
-      let newItems: Array<DialogType> = state.items.map(item => {
+      let newItems: Array<DialogType> = state.items.map((item) => {
         if (item._id === action.payload._id) {
           item = action.payload;
         }
@@ -42,13 +48,13 @@ export default (
       });
       return {
         ...state,
-        items: newItems
+        items: newItems,
       };
 
     case SET_IS_LOADING:
       return {
         ...state,
-        isLoading: action.payload
+        isLoading: action.payload,
       };
 
     default:

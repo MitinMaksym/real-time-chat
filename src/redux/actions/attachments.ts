@@ -24,30 +24,24 @@ export type ActionsTypes =
   | SetAttachmentsActionType
   | RemoveAttachmentActionType;
 
-type AttachmentsThunkType = ThunkAction<
-  Promise<void>,
-  AppStateType,
-  unknown,
-  ActionsTypes
->;
 const actions = {
   setAttachments: (files: Array<AttachmentType>): SetAttachmentsActionType => {
     return {
       type: SET_ATTACHMENTS,
-      payload: files
+      payload: files,
     };
   },
   removeAttachment: (file: AttachmentType): RemoveAttachmentActionType => {
     return {
       type: REMOVE_ATTACHMENT,
-      payload: file
+      payload: file,
     };
   },
 
   upload: async (file: File): Promise<UploadResponseDataType> => {
     let data: UploadResponseDataType = await filesApi.file(file);
     return data;
-  }
+  },
 };
 
 export default actions;

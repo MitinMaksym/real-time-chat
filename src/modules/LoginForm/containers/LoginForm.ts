@@ -27,6 +27,7 @@ const LoginFormContainer = withFormik<FormProps, LoginFormValues>({
   },
 
   handleSubmit: async (values, props) => {
+    console.log(props);
     try {
       let data = await store.dispatch(userActions.fetchLoginData(values));
       console.log(values);
@@ -37,7 +38,7 @@ const LoginFormContainer = withFormik<FormProps, LoginFormValues>({
           await store.dispatch({ type: "USER:SET_IS_AUTH", payload: true });
           await store.dispatch({ type: "INITIALIZED_SUCCESS" });
           //@ts-ignore
-          props.history.push("/");
+          //props.props.history.push("/");
         }
       }
     } catch (err) {

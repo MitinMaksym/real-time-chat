@@ -7,7 +7,7 @@ import { dialogsActions, userActions } from "../../redux/actions";
 import "./Home.scss";
 
 function Home(props) {
-  let { setCurrentDialog, signOut, isAuth, fullname } = props;
+  let { setCurrentDialog, signOut, isAuth, fullname, userId } = props;
   let onSignOut = () => {
     let check = window.confirm(
       `${fullname}, вы уверенны что хотите выйти из аккаунта?`
@@ -45,7 +45,7 @@ function Home(props) {
                     fontSize: "20px",
                     marginRight: "10px",
                     color: "#389990",
-                    cursor: "pointer"
+                    cursor: "pointer",
                   }}
                   type="logout"
                   onClick={onSignOut}
@@ -64,10 +64,14 @@ function Home(props) {
 }
 export default withRouter(
   connect(
-    ({ user }) => ({ isAuth: user.isAuth, fullname: user.data.fullname }),
+    ({ user }) => ({
+      isAuth: user.isAuth,
+      fullname: user.data.fullname,
+      userId: user.data._id,
+    }),
     {
       ...dialogsActions,
-      ...userActions
+      ...userActions,
     }
   )(Home)
 );

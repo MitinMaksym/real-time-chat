@@ -1,15 +1,14 @@
 import React from "react";
-
 import { IconReaded } from "..";
 import Avatar from "../Avatar";
 
 import { Link } from "react-router-dom";
-import { MessageType, UserDataType } from "../../types/types";
+import { MessageType, UserDataType, DialogType } from "../../types/types";
 import classNames from "classnames";
 import isToday from "date-fns/isToday";
+
 import format from "date-fns/format";
 import { Icon } from "antd";
-
 const Render = require("react-emoji-render");
 const Emoji = Render.Emojione;
 
@@ -28,12 +27,13 @@ const renderLastMessage = (message: MessageType, userId: string) => {
   } else {
     text = message.text;
   }
+
   return (
     <Emoji text={`${message.user._id === userId ? "Вы: " : ""} ${text}`} />
   );
 };
-
-type Props = {
+type MapDispatchPropsType = {};
+type OwnPropsType = {
   key: string;
   _id: string;
   isMe: boolean;
@@ -43,6 +43,8 @@ type Props = {
   currentDialogId: string;
   userId: string;
 };
+
+type Props = MapDispatchPropsType & OwnPropsType;
 const DialogItem: React.FC<Props> = ({
   _id,
   isMe,
@@ -50,7 +52,7 @@ const DialogItem: React.FC<Props> = ({
   lastMessage,
   author,
   currentDialogId,
-  userId
+  userId,
 }) => {
   let user: UserDataType = isMe ? partner : author;
   return (
@@ -58,7 +60,7 @@ const DialogItem: React.FC<Props> = ({
       <div
         className={classNames("dialogs__item", {
           "dialogs__item--online": user.isOnline,
-          "dialogs__item--active": currentDialogId === _id
+          "dialogs__item--active": currentDialogId === _id,
         })}
       >
         <div className="dialogs__item-avatar">

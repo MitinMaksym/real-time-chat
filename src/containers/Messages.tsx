@@ -1,14 +1,16 @@
-import React, { useEffect, useCallback, useState } from "react";
+import React, { useEffect, useCallback, useState, memo } from "react";
 
-import socket from "../core/socket";
 import { Messages as BaseMessages } from "../components";
 import { messagesActions } from "../redux/actions";
 import { MessageType, AttachmentServerType, DialogType } from "../types/types";
-import { UpdateMessagesDataType } from "../redux/actions/messages";
+import { messagesApi } from "../utils/api";
+
 import { AppStateType } from "../redux/reduces";
 
 import { connect } from "react-redux";
 import { Empty } from "antd";
+import io from "socket.io-client";
+import userSocket from "../core/socket";
 
 type OwnPropsType = {};
 type MapStatePropsType = {
@@ -23,94 +25,129 @@ type MapStatePropsType = {
 type MapDispatchPropsType = {
   fetchMessages: (id: string) => void;
   addMessage: (message: MessageType) => void;
-  updateUnreadMessages: (data: UpdateMessagesDataType) => void;
+  updateUnreadMessages: () => void;
+  removeMessageById: (id: string) => void;
 };
 
 type Props = OwnPropsType & MapStatePropsType & MapDispatchPropsType;
-const Messages: React.FC<Props> = ({
-  items,
-  fetchMessages,
-  currentDialogId,
-  isLoading,
-  addMessage,
-  updateUnreadMessages,
-  attachments,
-  userId,
-  dialogsItems
-}) => {
-  let [imageUrl, setImageUrl] = useState("");
-  let [showImage, setShowImage] = useState(false);
-  const [isTyping, setIsTyping] = useState(false);
-  let typingTimeoutId: any = null;
-  const toggleIsTyping = (data: any) => {
-    if (data.dialogId === currentDialogId) {
-      setIsTyping(true);
-      clearInterval(typingTimeoutId);
-      typingTimeoutId = setTimeout(() => {
-        setIsTyping(false);
-      }, 3000);
-    }
-  };
-  const onNewMessage = (message: MessageType) => {
-    addMessage(message);
-  };
-  const updateUnread = (data: UpdateMessagesDataType) => {
-    updateUnreadMessages(data);
-  };
-  const messagesRef = useCallback(
-    (node: HTMLDivElement) => {
-      setTimeout(() => {
-        if (node !== null) {
-          node.scrollTo(0, 99999);
-        }
-      });
-    },
-    [items]
-  );
+//const sock = io("http://localhost:3003/");
 
-  useEffect(() => {
-    if (imageUrl) {
-      setShowImage(true);
-    }
-  }, [imageUrl]);
+const Messages: React.FC<Props> = memo(
+  ({
+    items,
+    fetchMessages,
+    currentDialogId,
+    isLoading,
+    addMessage,
+    attachments,
+    userId,
+    dialogsItems,
+    updateUnreadMessages,
+    removeMessageById,
+  }) => {
+    let [imageUrl, setImageUrl] = useState("");
+    let [showImage, setShowImage] = useState(false);
+    const [isTyping, setIsTyping] = useState(false);
 
-  useEffect(() => {
-    if (currentDialogId) {
-      fetchMessages(currentDialogId);
-    }
-    socket.on("SERVER:NEW_MESSAGE", onNewMessage);
-    socket.on("SERVER:UPDATE_UNREADED_MESSAGES", updateUnread);
-    socket.on("DIALOGS:TYPING", toggleIsTyping);
-    socket.on("SERVER:DELETE_MESSAGE", (msg: string) => {});
-
-    return () => {
-      socket.removeListener("SERVER:NEW_MESSAGE", onNewMessage);
-      socket.removeListener("SERVER:UPDATE_UNREADED_MESSAGES", updateUnread);
-      socket.removeListener("DIALOGS:TYPING", toggleIsTyping);
+    let typingTimeoutId: any = null;
+    const toggleIsTyping = (id: string) => {
+      if (userId !== id) {
+        setIsTyping(true);
+        clearInterval(typingTimeoutId);
+        typingTimeoutId = setTimeout(() => {
+          setIsTyping(false);
+        }, 3000);
+      }
     };
-  }, [currentDialogId]);
+    const onNewMessage = (message: MessageType) => {
+      if (
+        message.dialog._id === currentDialogId &&
+        message.user._id !== userId
+      ) {
+        messagesApi.getAllByDialogId(currentDialogId);
+      }
+      addMessage(message);
+    };
 
-  if (!currentDialogId) {
-    return <Empty description="Виберите диалог" />;
+    const onUpdateUnreadMsg = ({ user }: { user: string }) => {
+      if (userId !== user) {
+        console.log("updateUnread");
+
+        updateUnreadMessages();
+      }
+    };
+
+    const onDeleteMessage = (message: MessageType) => {
+      removeMessageById(message._id);
+    };
+
+    const messagesRef = useCallback(
+      (node: HTMLDivElement) => {
+        setTimeout(() => {
+          if (node !== null) {
+            node.scrollTo(0, 99999);
+          }
+        });
+      },
+      [items]
+    );
+
+    useEffect(() => {
+      if (imageUrl) {
+        setShowImage(true);
+      }
+    }, [imageUrl]);
+
+    useEffect(() => {
+      if (currentDialogId) {
+        fetchMessages(currentDialogId);
+      }
+      userSocket.emit("joinRoom", currentDialogId);
+      userSocket.on("SERVER:NEW-MESSAGE", onNewMessage);
+      userSocket.on("SERVER:DIALOGS:TYPING", toggleIsTyping);
+      userSocket.on("SERVER:UPDATE-UNREAD-MSG", onUpdateUnreadMsg);
+
+      userSocket.on("SERVER:DELETE_MESSAGE", onDeleteMessage);
+
+      return () => {
+        userSocket.removeListener("SERVER:NEW-MESSAGE", onNewMessage);
+        userSocket.removeListener("SERVER:DIALOGS:TYPING", toggleIsTyping);
+        userSocket.removeListener(
+          "SERVER:UPDATE-UNREAD-MSG",
+          onUpdateUnreadMsg
+        );
+        userSocket.removeListener("SERVER:DELETE_MESSAGE", onDeleteMessage);
+        userSocket.emit("leaveRoom", currentDialogId);
+
+        console.log("messages unmounting");
+      };
+    }, [currentDialogId]);
+
+    if (!currentDialogId) {
+      return <Empty description="Виберите диалог" />;
+    }
+
+    return (
+      <BaseMessages
+        boxRef={messagesRef}
+        items={items}
+        isLoading={isLoading}
+        currentDialogId={currentDialogId}
+        attachments={attachments}
+        setImageUrl={setImageUrl}
+        showImage={showImage}
+        setShowImage={setShowImage}
+        imageUrl={imageUrl}
+        userId={userId}
+        dialogsItems={dialogsItems}
+        isTyping={isTyping}
+        onRemoveMessage={(id: string) => {
+          messagesApi.removeMessageById(id);
+        }}
+      />
+    );
   }
-
-  return (
-    <BaseMessages
-      boxRef={messagesRef}
-      items={items}
-      isLoading={isLoading}
-      currentDialogId={currentDialogId}
-      attachments={attachments}
-      setImageUrl={setImageUrl}
-      showImage={showImage}
-      setShowImage={setShowImage}
-      imageUrl={imageUrl}
-      userId={userId}
-      dialogsItems={dialogsItems}
-      isTyping={isTyping}
-    />
-  );
-};
+);
 let mapStateToProps = (state: AppStateType): MapStatePropsType => {
   return {
     currentDialogId: state.dialogs.currentDialogId,
@@ -118,7 +155,7 @@ let mapStateToProps = (state: AppStateType): MapStatePropsType => {
     items: state.messages.items,
     attachments: state.attachments.items,
     userId: state.user.data ? state.user.data._id : "",
-    dialogsItems: state.dialogs.items
+    dialogsItems: state.dialogs.items,
   };
 };
 export default connect<
@@ -129,5 +166,6 @@ export default connect<
 >(mapStateToProps, {
   fetchMessages: messagesActions.fetchMessages,
   addMessage: messagesActions.addMessage,
-  updateUnreadMessages: messagesActions.updateUnreadMessages
+  updateUnreadMessages: messagesActions.updateUnreadMessages,
+  removeMessageById: messagesActions.removeMessageById,
 })(Messages);

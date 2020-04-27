@@ -1,5 +1,4 @@
 import { RemoveMessageActionType } from "./messages";
-import { Dispatch } from "redux";
 import { AppStateType } from "./../reduces/index";
 import { DialogType, MessageType } from "./../../types/types";
 import { dialogsApi } from "../../utils/api";
@@ -7,9 +6,9 @@ import {
   SET_CURRENT_DIALOG,
   SET_ITEMS,
   UPDATE_DIALOG,
-  SET_IS_LOADING
+  SET_IS_LOADING,
+  ADD_NEW_DIALOG,
 } from "../reduces/dialogs";
-import { REMOVE_MESSAGE } from "../reduces/messages";
 import { ThunkAction } from "redux-thunk";
 
 export type SetCurrentDialogActionType = {
@@ -36,13 +35,18 @@ type SetIsLoadingActionType = {
   type: typeof SET_IS_LOADING;
   payload: boolean;
 };
+export type AddNewDialogType = {
+  type: typeof ADD_NEW_DIALOG;
+  payload: DialogType;
+};
 
 export type ActionsTypes =
   | SetCurrentDialogActionType
   | SetItemsActionType
   | UpdateDialogActionType
   | SetIsLoadingActionType
-  | RemoveMessageActionType;
+  | RemoveMessageActionType
+  | AddNewDialogType;
 
 type DialogsThunkType = ThunkAction<
   Promise<void>,
@@ -54,59 +58,29 @@ type DialogsThunkType = ThunkAction<
 const actions = {
   setCurrentDialog: (id: string): SetCurrentDialogActionType => ({
     type: SET_CURRENT_DIALOG,
-    payload: id
+    payload: id,
   }),
   setItems: (items: Array<DialogType>): SetItemsActionType => ({
     type: SET_ITEMS,
-    payload: items
+    payload: items,
   }),
-  fetchDialogs: (): DialogsThunkType => async dispatch => {
+  fetchDialogs: (): DialogsThunkType => async (dispatch) => {
     dispatch(actions.setIsLoading(true));
     let dialogs = await dialogsApi.getAll();
     dispatch(actions.setItems(dialogs));
     dispatch(actions.setIsLoading(false));
   },
   updateDialog: (dialog: DialogType): UpdateDialogActionType => {
+    console.log("update");
     return { type: UPDATE_DIALOG, payload: dialog };
   },
-  updateDialogs: (data: {
-    item: DialogType & MessageType;
-    operation: string;
-  }) => async (
-    dispatch: Dispatch<ActionsTypes>,
-    getState: () => AppStateType
-  ) => {
-    let state = getState();
-
-    if (data.operation === "SERVER:CREATE_DIALOG") {
-      let oldDialogs = state.dialogs.items;
-      let userId: string = state.user.data ? state.user.data._id : "";
-      let authorId: string = data.item.author._id;
-      let partner: string = data.item.partner._id;
-      let check: boolean = userId === partner || userId === authorId;
-      if (check) {
-        dispatch(actions.setItems([...oldDialogs, data.item]));
-      }
-    } else if (
-      data.operation === "SERVER:NEW_MESSAGE" ||
-      data.operation === "SERVER:DELETE_MESSAGE"
-    ) {
-      let dialogs = state.dialogs.items;
-
-      let check = dialogs.some((dialog: DialogType) => {
-        return dialog._id === data.item.dialog._id;
-      });
-      if (check) {
-        dispatch(actions.updateDialog(data.item.dialog));
-        if (data.operation === "SERVER:DELETE_MESSAGE") {
-          dispatch({ type: REMOVE_MESSAGE, payload: data.item._id });
-        }
-      }
-    }
+  addNewDialog: (dialog: DialogType): AddNewDialogType => {
+    return { type: ADD_NEW_DIALOG, payload: dialog };
   },
+
   setIsLoading: (bool: boolean): SetIsLoadingActionType => {
     return { type: SET_IS_LOADING, payload: bool };
-  }
+  },
 };
 
 export default actions;

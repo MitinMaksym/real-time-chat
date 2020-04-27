@@ -1,12 +1,12 @@
-import React, { useState, useEffect, Dispatch } from "react";
+import React, { useState, useEffect } from "react";
 
-import socket from "../core/socket";
 import { Dialogs as BaseDialogs } from "../components";
 import { dialogsActions } from "../redux/actions";
-import { DialogType, MessageType } from "../types/types";
-
+import { DialogType } from "../types/types";
 import { connect } from "react-redux";
 import { AppStateType } from "../redux/reduces";
+
+import socket from "../core/socket";
 
 type OwnPropsType = {};
 
@@ -19,10 +19,8 @@ type MapStatePropsType = {
 
 type MapDispatchPropsType = {
   fetchDialogs: () => void;
-  updateDialogs: (data: {
-    operation: string;
-    item: DialogType & MessageType;
-  }) => void;
+  addNewDialog: (dialog: DialogType) => void;
+  updateDialog: (dialog: DialogType) => void;
 };
 
 type Props = OwnPropsType & MapStatePropsType & MapDispatchPropsType;
@@ -33,37 +31,25 @@ const Dialogs: React.FC<Props> = ({
   userId,
   fetchDialogs,
   currentDialogId,
-  updateDialogs
+  addNewDialog,
+  updateDialog,
 }) => {
   let [inputValue, setInputValue] = useState("");
   let [filtered, setFiltered] = useState(Array.from(items));
 
-  let onUpdateDialogs = (
-    item: DialogType & MessageType,
-    operation = "SERVER:CREATE_DIALOG"
-  ) => {
-    updateDialogs({ operation, item });
-  };
-  let onDeleteMessage = (
-    item: DialogType & MessageType,
-    operation = "SERVER:DELETE_MESSAGE"
-  ) => {
-    updateDialogs({ operation, item });
-  };
-  let onNewMessage = (
-    item: DialogType & MessageType,
-    operation = "SERVER:NEW_MESSAGE"
-  ) => {
-    updateDialogs({ operation, item });
-  };
   let onSearch = (value: string) => {
     setInputValue(value);
     setFiltered(
-      items.filter(item => {
+      items.filter((item) => {
         let user = userId === item.author._id ? item.partner : item.author;
         return user.fullname.toLowerCase().indexOf(value) >= 0;
       })
     );
+  };
+
+  let onAddNewDialog = (dialog: DialogType) => {
+    console.log(dialog);
+    addNewDialog(dialog);
   };
 
   useEffect(() => {
@@ -72,17 +58,13 @@ const Dialogs: React.FC<Props> = ({
 
   useEffect(() => {
     fetchDialogs();
-
-    socket.on("SERVER:CREATE_DIALOG", onUpdateDialogs);
-    socket.on("SERVER:DELETE_MESSAGE", onDeleteMessage);
-    socket.on("SERVER:NEW_MESSAGE", onNewMessage);
+    socket.emit("joinUser", { userId });
+    socket.on("SERVER:ADD-NEW-DIALOG", onAddNewDialog);
+    socket.on("SERVER:UPDATE-DIALOG", updateDialog);
 
     return () => {
-      socket.removeListener("SERVER:CREATE_DIALOG", onUpdateDialogs);
-
-      socket.removeListener("SERVER:NEW_MESSAGE", onNewMessage);
-
-      socket.removeListener("SERVER:DELETE_MESSAGE", onDeleteMessage);
+      socket.removeListener("SERVER:ADD-NEW-DIALOG", onAddNewDialog);
+      socket.removeListener("SERVER:UPDATE-DIALOG", updateDialog);
     };
   }, []);
 
@@ -101,7 +83,7 @@ let mapStateToProps = (state: AppStateType): MapStatePropsType => ({
   items: state.dialogs.items,
   isLoading: state.dialogs.isLoading,
   userId: state.user.data ? state.user.data._id : "",
-  currentDialogId: state.dialogs.currentDialogId
+  currentDialogId: state.dialogs.currentDialogId,
 });
 
 export default connect<
@@ -111,5 +93,6 @@ export default connect<
   AppStateType
 >(mapStateToProps, {
   fetchDialogs: dialogsActions.fetchDialogs,
-  updateDialogs: dialogsActions.updateDialogs
+  addNewDialog: dialogsActions.addNewDialog,
+  updateDialog: dialogsActions.updateDialog,
 })(Dialogs);

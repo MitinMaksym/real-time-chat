@@ -2,10 +2,9 @@ import React, { useState } from "react";
 
 import { Sidebar as SidebarBase } from "../components";
 import { userApi, dialogsApi } from "../utils/api";
-import { dialogsActions } from "../redux/actions";
-import { CreateDialogDataActionType } from "../redux/actions/dialogs";
 import { AppStateType } from "../redux/reduces";
-import { DialogType, UserDataType } from "../types/types";
+import { UserDataType } from "../types/types";
+import socket from "../core/socket";
 
 import { withRouter, RouteComponentProps } from "react-router-dom";
 import { connect } from "react-redux";
@@ -19,7 +18,7 @@ type MapStatePropsType = {
 
 type Props = OwnPropsType & MapStatePropsType & RouteComponentProps;
 
-let Sidebar: React.FC<Props> = props => {
+let Sidebar: React.FC<Props> = (props) => {
   let [visible, setVisible] = useState(false);
   let [isLoading, setIsLoading] = useState(false);
   let [users, setUsers] = useState<Array<UserDataType>>([]);
@@ -43,7 +42,7 @@ let Sidebar: React.FC<Props> = props => {
     try {
       let data = await dialogsApi.createDialog({
         partner: partner,
-        text: newMessageText
+        text: newMessageText,
       });
       if (data && data.status === "success") {
         props.history.push(`/dialog/${data.dialog._id}`);
@@ -54,14 +53,14 @@ let Sidebar: React.FC<Props> = props => {
           type: "error",
           message: "Такой диалог уже существует",
           description: "",
-          duration: 1
+          duration: 1,
         });
       } else {
         openNotification({
           type: "error",
           message: "Ошибка",
           description: "",
-          duration: 1
+          duration: 1,
         });
       }
     }
@@ -120,7 +119,7 @@ let Sidebar: React.FC<Props> = props => {
 
 let mapStateToProps = (state: AppStateType): MapStatePropsType => {
   return {
-    userId: state.user.data ? state.user.data._id : ""
+    userId: state.user.data ? state.user.data._id : "",
   };
 };
 

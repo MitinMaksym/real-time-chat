@@ -1,9 +1,11 @@
-import React, { ChangeEvent } from "react";
+import React from "react";
 
 import { Dialogs } from "../../containers";
 import { UserDataType } from "../../types/types";
 
 import { Button, Icon, Modal, Select, Form, Input } from "antd";
+
+import "./Sidebar.scss";
 
 const { Option } = Select;
 
@@ -25,7 +27,7 @@ type Props = {
   onSearch: (value: string) => void;
   onAddNewMessage: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
 };
-let Sidebar: React.FC<Props> = props => {
+let Sidebar: React.FC<Props> = (props) => {
   let {
     isLoading,
     visible,
@@ -40,10 +42,10 @@ let Sidebar: React.FC<Props> = props => {
     onAddNewMessage,
     partner,
     newMessageText,
-    selectedInputValue
+    selectedInputValue,
   } = props;
 
-  let options = users.map(user => (
+  let options = users.map((user) => (
     <Option key={user._id}>{user.fullname}</Option>
   ));
   return (
@@ -77,7 +79,7 @@ let Sidebar: React.FC<Props> = props => {
               onClick={handleOk}
             >
               Создать
-            </Button>
+            </Button>,
           ]}
         >
           <p>{modalText}</p>

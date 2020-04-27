@@ -1,12 +1,12 @@
+import { UPDATE_UNREAD_MESSAGES } from "./../reduces/messages";
 import { AppStateType } from "./../reduces/index";
-import { MessageType, DialogType } from "./../../types/types";
+import { MessageType } from "./../../types/types";
 import { messagesApi } from "../../utils/api";
-import { dialogsActions } from "./index";
 import {
   SET_ITEMS,
   ADD_MESSAGE,
   SET_IS_LOADING,
-  REMOVE_MESSAGE
+  REMOVE_MESSAGE,
 } from "../reduces/messages";
 import { ThunkAction } from "redux-thunk";
 import { UpdateDialogActionType } from "./dialogs";
@@ -21,11 +21,6 @@ type SetIsLoadingActionType = {
   payload: boolean;
 };
 
-export type UpdateMessagesDataType = {
-  dialog: DialogType;
-  messages: Array<MessageType>;
-};
-
 export type RemoveMessageActionType = {
   type: typeof REMOVE_MESSAGE;
   payload: string;
@@ -35,13 +30,17 @@ type AddMessageActionType = {
   type: typeof ADD_MESSAGE;
   payload: MessageType;
 };
+type UpdateUnreadMessagesType = {
+  type: typeof UPDATE_UNREAD_MESSAGES;
+};
 
 export type ActionsTypes =
   | SetMessagesActionType
   | SetIsLoadingActionType
   | AddMessageActionType
   | RemoveMessageActionType
-  | UpdateDialogActionType;
+  | UpdateDialogActionType
+  | UpdateUnreadMessagesType;
 
 type MessagesThunkType = ThunkAction<
   Promise<void>,
@@ -53,74 +52,30 @@ type MessagesThunkType = ThunkAction<
 const actions = {
   setMessages: (items: Array<MessageType>): SetMessagesActionType => ({
     type: SET_ITEMS,
-    payload: items
+    payload: items,
   }),
-  fetchMessages: (id: string): MessagesThunkType => async dispatch => {
+  fetchMessages: (id: string): MessagesThunkType => async (dispatch) => {
     dispatch(actions.setIsLoading(true));
-    messagesApi.getAllByDialogId(id).then(items => {
+    messagesApi.getAllByDialogId(id).then((items) => {
       dispatch(actions.setMessages(items));
       dispatch(actions.setIsLoading(false));
     });
   },
-  addMessage: (message: MessageType): MessagesThunkType => async (
-    dispatch,
-    getState: () => AppStateType
-  ) => {
-    let { dialogs } = getState();
-    let state: AppStateType = getState();
-    let userId: string = state.user.data ? state.user.data._id : "";
-
-    if (dialogs.currentDialogId === message.dialog._id) {
-      dispatch({ type: ADD_MESSAGE, payload: message });
-
-      if (userId !== message.user._id) {
-        messagesApi.getAllByDialogId(message.dialog._id);
-        dispatch(dialogsActions.updateDialog(message.dialog));
-      }
-    }
+  addMessage: (message: MessageType): AddMessageActionType => {
+    return { type: ADD_MESSAGE, payload: message };
   },
-
-  updateUnreadMessages: (
-    data: UpdateMessagesDataType
-  ): MessagesThunkType => async (dispatch, getState: () => AppStateType) => {
-    let state: AppStateType = getState();
-    let userId: string = state.user.data ? state.user.data._id : "";
-    let currentDialogId: string = getState().dialogs.currentDialogId;
-
-    let author: string = data.dialog.author._id;
-    let partner: string = data.dialog.partner._id;
-    let hasDialog: boolean = userId === partner || userId === author;
-
-    if (hasDialog) {
-      if (data.dialog && data.dialog._id === currentDialogId) {
-        let currentMessages: Array<MessageType> = state.messages.items.filter(
-          (message: MessageType) => {
-            return (
-              message.dialog._id === currentDialogId &&
-              message.user._id === userId
-            );
-          }
-        );
-        let check: boolean = currentMessages.some(
-          (message: MessageType) => message.readed !== true
-        );
-        if (check) {
-          dispatch(actions.setMessages(data.messages));
-          dispatch(dialogsActions.updateDialog(data.dialog));
-        }
-        dispatch(dialogsActions.updateDialog(data.dialog));
-      } else {
-        dispatch(dialogsActions.updateDialog(data.dialog));
-      }
-    }
+  removeMessageById: (id: string): RemoveMessageActionType => {
+    return { type: REMOVE_MESSAGE, payload: id };
   },
-  removeMessageById: (id: string): void => {
-    messagesApi.removeMessageById(id);
+  updateUnreadMessages: () => {
+    return {
+      type: UPDATE_UNREAD_MESSAGES,
+    };
   },
 
   setIsLoading: (bool: boolean): SetIsLoadingActionType => {
     return { type: SET_IS_LOADING, payload: bool };
-  }
+  },
 };
 
 export default actions;

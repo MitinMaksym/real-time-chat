@@ -19,7 +19,7 @@ type MapDisptchPropsType = {
 type OwnPropsType = {};
 
 type Props = MapStatePropsType & MapDisptchPropsType & OwnPropsType;
-let App: React.FC<Props> = props => {
+let App: React.FC<Props> = (props) => {
   let { isAuth, initializeApp, isInitialized } = props;
   useEffect(() => {
     initializeApp();
@@ -32,7 +32,7 @@ let App: React.FC<Props> = props => {
           position: "absolute",
           left: "50%",
           top: "50%",
-          transform: "translate(-50%, -50%)"
+          transform: "translate(-50%, -50%)",
         }}
         size="large"
         tip="Загрузка..."
@@ -70,7 +70,7 @@ let App: React.FC<Props> = props => {
 let mapStateToProps = (state: AppStateType): MapStatePropsType => {
   return {
     isAuth: state.user.isAuth,
-    isInitialized: state.app.isInitialized
+    isInitialized: state.app.isInitialized,
   };
 };
 export default connect<

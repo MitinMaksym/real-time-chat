@@ -2,16 +2,17 @@ import React, { useState, useEffect, useCallback } from "react";
 import { ChatInput as ChatInputBase } from "../components";
 import { connect } from "react-redux";
 import { attachmentsActions } from "../redux/actions";
-import socket from "../core/socket";
 import { filesApi, messagesApi } from "../utils/api";
 import { AttachmentServerType, AttachmentType } from "../types/types";
 import { AppStateType } from "../redux/reduces";
+import socket from "../core/socket";
 
 type OwnPropsType = {};
 
 type MapStatePropsType = {
   currentDialogId: string;
   attachments: Array<AttachmentType>;
+  userId: string;
 };
 
 type MapDispatchPropsType = {
@@ -25,7 +26,8 @@ const ChatInput: React.FC<Props> = ({
   currentDialogId,
   setAttachments,
   removeAttachment,
-  attachments
+  attachments,
+  userId,
 }) => {
   const [value, setValue] = useState("");
   const [isLoading, setLoading] = useState(false);
@@ -65,7 +67,7 @@ const ChatInput: React.FC<Props> = ({
       setIsRecording(false);
     };
 
-    recorder.ondataavailable = e => {
+    recorder.ondataavailable = (e) => {
       const file = new File([e.data], "audio.webm");
       setLoading(true);
       filesApi
@@ -88,7 +90,7 @@ const ChatInput: React.FC<Props> = ({
     return messagesApi.sendMessage({
       text: "",
       currentDialogId,
-      attachments: [audioId]
+      attachments: [audioId],
     });
   };
   const onSendMessage = (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
@@ -99,7 +101,7 @@ const ChatInput: React.FC<Props> = ({
         text: value,
         currentDialogId,
 
-        attachments: attachments.map(file => (file.uid ? file.uid : ""))
+        attachments: attachments.map((file) => (file.uid ? file.uid : "")),
       });
       setValue("");
       setAttachments([]);
@@ -109,7 +111,7 @@ const ChatInput: React.FC<Props> = ({
     e: React.KeyboardEvent<HTMLTextAreaElement> &
       React.MouseEvent<HTMLElement, MouseEvent>
   ) => {
-    socket.emit("DIALOGS:TYPING", { dialogId: currentDialogId });
+    socket.emit("DIALOGS:TYPING", { currentDialogId, userId });
     if (value.length || attachments.length) {
       if (e.keyCode === 13) {
         onSendMessage(e);
@@ -139,8 +141,9 @@ const ChatInput: React.FC<Props> = ({
   //---------------------FILE
 
   let selectFile = async (files: FileList): Promise<void> => {
-    let uploaded: Array<AttachmentType &
-      AttachmentServerType> = attachments.length ? attachments : [];
+    let uploaded: Array<
+      AttachmentType & AttachmentServerType
+    > = attachments.length ? attachments : [];
     for (let i = 0; i < files.length; i++) {
       let file: File = files[i];
       let uid: string = Math.floor(Math.random() * 1000).toString();
@@ -151,8 +154,8 @@ const ChatInput: React.FC<Props> = ({
           name: file.name,
           status: "done",
           url:
-            "https://cdn.lowgif.com/small/dc86e54ceca03be4-loading-spinner-animated-gif-83320-mediabin.gif"
-        }
+            "https://cdn.lowgif.com/small/dc86e54ceca03be4-loading-spinner-animated-gif-83320-mediabin.gif",
+        },
       ];
       setAttachments(uploaded);
       setIsDisabled(true);
@@ -167,7 +170,7 @@ const ChatInput: React.FC<Props> = ({
                   uid: data.file._id,
                   name: data.file.filename,
                   status: "done",
-                  url: data.file.url.replace(/http/, "https")
+                  url: data.file.url.replace(/http/, "https"),
                 };
               }
               return item;
@@ -205,9 +208,9 @@ const ChatInput: React.FC<Props> = ({
     const el: HTMLDivElement | null = document.querySelector(
       ".chat-input__smile-btn"
     );
-    document.addEventListener("click", e => onOutSideClick(e, el));
+    document.addEventListener("click", (e) => onOutSideClick(e, el));
     return () => {
-      document.removeEventListener("click", e => {
+      document.removeEventListener("click", (e) => {
         onOutSideClick(e, el);
       });
     };
@@ -240,7 +243,8 @@ const ChatInput: React.FC<Props> = ({
 let mapStateToProps = (state: AppStateType): MapStatePropsType => {
   return {
     currentDialogId: state.dialogs.currentDialogId,
-    attachments: state.attachments.items
+    attachments: state.attachments.items,
+    userId: state.user.data ? state.user.data._id : "",
   };
 };
 
@@ -251,5 +255,5 @@ export default connect<
   AppStateType
 >(mapStateToProps, {
   setAttachments: attachmentsActions.setAttachments,
-  removeAttachment: attachmentsActions.removeAttachment
+  removeAttachment: attachmentsActions.removeAttachment,
 })(ChatInput);

@@ -11,9 +11,8 @@ import {
   MessageType,
   DialogType,
   UserDataType,
-  AttachmentServerType
+  AttachmentServerType,
 } from "../../types/types";
-import { messagesActions } from "../../redux/actions";
 
 type Props = {
   items: Array<MessageType>;
@@ -28,6 +27,7 @@ type Props = {
   attachments: Array<AttachmentServerType>;
   setImageUrl: (url: string) => void;
   setShowImage: (value: boolean) => void;
+  onRemoveMessage: (id: string) => void;
 };
 
 const Messages: React.FC<Props> = ({
@@ -42,7 +42,8 @@ const Messages: React.FC<Props> = ({
   setShowImage,
   imageUrl,
   dialogsItems,
-  isTyping
+  isTyping,
+  onRemoveMessage,
 }) => {
   let currentDialog: DialogType | undefined =
     dialogsItems && find(dialogsItems, { _id: currentDialogId });
@@ -61,7 +62,7 @@ const Messages: React.FC<Props> = ({
   return (
     <div
       className={classNames("chat__dialog-messages", {
-        "chat__dialog-messages-attachments": attachments.length
+        "chat__dialog-messages-attachments": attachments.length,
       })}
     >
       <div
@@ -75,6 +76,7 @@ const Messages: React.FC<Props> = ({
             items.map((item: MessageType) => {
               return (
                 <Message
+                  id={item._id}
                   key={item._id}
                   alt="User avatar"
                   text={item.text}
@@ -82,10 +84,8 @@ const Messages: React.FC<Props> = ({
                   isMe={item.user._id === userId}
                   {...item}
                   isTyping={false}
-                  onRemoveMessage={() => {
-                    messagesActions.removeMessageById(item._id);
-                  }}
                   setImageUrl={setImageUrl}
+                  onDeleteMessage={onRemoveMessage}
                 />
               );
             })
