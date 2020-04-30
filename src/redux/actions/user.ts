@@ -1,36 +1,14 @@
-import { SetMessagesActionType } from "./messages";
+import { InferActionsTypes } from "./../store";
 import { AppStateType } from "./../reduces/index";
 import { ThunkAction } from "redux-thunk";
 import { UserDataType } from "./../../types/types";
 import { userApi } from "../../utils/api";
 import { openNotification } from "../../utils/helpers";
 import { dialogsActions, messagesActions } from "./index";
-import { SET_USER_DATA, SET_IS_AUTH } from "../reduces/user";
 import axios from "axios";
-import { SetItemsActionType, SetCurrentDialogActionType } from "./dialogs";
+import { Dispatch } from "redux";
 
-type SetAuthActionType = {
-  type: typeof SET_IS_AUTH;
-  payload: boolean;
-};
-
-type SetUserActionType = {
-  type: typeof SET_USER_DATA;
-  payload: UserDataType | null;
-};
-
-type SignUpPostDataType = {
-  fullname: string;
-  email: string;
-  password: string;
-};
-
-export type ActionsTypes =
-  | SetAuthActionType
-  | SetUserActionType
-  | SetItemsActionType
-  | SetMessagesActionType
-  | SetCurrentDialogActionType;
+export type ActionsTypes = InferActionsTypes<typeof actions>;
 
 export type UsersThunkType = ThunkAction<
   Promise<void>,
@@ -39,93 +17,93 @@ export type UsersThunkType = ThunkAction<
   ActionsTypes
 >;
 const actions = {
-  setAuth: (payload: boolean): SetAuthActionType => ({
-    type: SET_IS_AUTH,
-    payload
-  }),
-  setUserData: (data: UserDataType | null): SetUserActionType => {
+  setAuth: (payload: boolean) =>
+    ({
+      type: "USERS:SET_IS_AUTH",
+      payload,
+    } as const),
+  setUserData: (data: UserDataType | null) => {
     return {
-      type: SET_USER_DATA,
-      payload: data
-    };
+      type: "USERS:SET_USER_DATA",
+      payload: data,
+    } as const;
   },
-  fetchUserData: (): ThunkAction<
-    Promise<any>,
-    AppStateType,
-    unknown,
-    ActionsTypes
-  > => async dispatch => {
-    try {
-      const data = await userApi.getUserInfo();
-      if (data.status === "success") {
-        dispatch(actions.setUserData(data.user));
-        return data;
-      }
-    } catch (err) {
-      if (err.response.status === 403) {
-        delete window.localStorage.token;
-        axios.defaults.headers.common["token"] = "";
-      } else {
-        throw new Error(err);
-      }
+};
+
+//-----------------THUNK CREATORS
+
+export const fetchUserData = () => async (
+  dispatch: Dispatch<ActionsTypes>,
+  getState: () => AppStateType
+) => {
+  try {
+    const data = await userApi.getUserInfo();
+    if (data.status === "success") {
+      dispatch(actions.setUserData(data.user));
+      dispatch(actions.setAuth(true));
     }
-  },
-  signOut: (): UsersThunkType => async dispatch => {
-    dispatch(actions.setAuth(false));
-    dispatch(actions.setUserData(null));
-    dispatch(dialogsActions.setItems([]));
-    dispatch(messagesActions.setMessages([]));
-    delete window.localStorage.token;
-    dispatch(dialogsActions.setCurrentDialog(""));
-  },
-  fetchLoginData: (postData: {
-    email: string;
-    password: string;
-    //@ts-ignore
-  }): UsersThunkType => async dispatch => {
-    try {
-      const data = await userApi.signUserIn(postData);
-      if (data.status === "success") {
-        const { token } = data;
-
-        window.localStorage["token"] = token;
-        axios.defaults.headers.common["token"] = token;
-
-        openNotification({
-          type: "success",
-          message: "Авторизация пройшла успешно!",
-          description: "",
-          duration: 1
-        });
-        return data;
-      }
-    } catch (err) {
-      if (err.response.status === 404) {
-        openNotification({
-          type: "error",
-          message: "Ошибка при авторизации",
-          description: "Такой пользователь не зарегистрирован",
-          duration: 1
-        });
-      } else if (err.response.status === 401) {
-        openNotification({
-          type: "error",
-          message: "Ошибка при авторизации",
-          description: "Ваш аккаунт не подтвержден",
-          duration: 1
-        });
-      } else {
-        delete window.localStorage.token;
-        axios.defaults.headers.common["token"] = "";
-        openNotification({
-          type: "error",
-          message: "Ошибка при авторизации",
-          description: "Неправильный логин или пароль",
-          duration: 1
-        });
-      }
+  } catch (err) {
+    if (err.response.status === 403) {
+      delete window.localStorage.token;
+      axios.defaults.headers.common["token"] = "";
+    } else {
+      throw new Error(err);
     }
   }
+};
+
+export const fetchLoginData = async (postData: {
+  email: string;
+  password: string;
+}) => {
+  try {
+    const data = await userApi.signUserIn(postData);
+    if (data.status === "success") {
+      const { token } = data;
+
+      window.localStorage["token"] = token;
+      axios.defaults.headers.common["token"] = token;
+
+      openNotification({
+        type: "success",
+        message: "Авторизация пройшла успешно!",
+        description: "",
+        duration: 1,
+      });
+      return data;
+    }
+  } catch (err) {
+    if (err.response.status === 404) {
+      openNotification({
+        type: "error",
+        message: "Ошибка при авторизации",
+        description: "Такой пользователь не зарегистрирован",
+        duration: 1,
+      });
+    } else if (err.response.status === 401) {
+      openNotification({
+        type: "error",
+        message: "Ошибка при авторизации",
+        description: "Ваш аккаунт не подтвержден",
+        duration: 1,
+      });
+    } else {
+      delete window.localStorage.token;
+      axios.defaults.headers.common["token"] = "";
+      openNotification({
+        type: "error",
+        message: "Ошибка при авторизации",
+        description: "Неправильный логин или пароль",
+        duration: 1,
+      });
+    }
+  }
+};
+
+export const signOut = (): UsersThunkType => async (dispatch) => {
+  dispatch(actions.setAuth(false));
+  dispatch(actions.setUserData(null));
+  delete window.localStorage.token;
 };
 
 export default actions;

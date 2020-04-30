@@ -1,21 +1,20 @@
 import { ActionsTypes } from "./../actions/app";
-export const INITIALIZED_SUCCESS = "APP:INITIALIZED_SUCCESS";
-export type InitialStateType = {
-  isInitialized: boolean;
+
+const initialState = {
+  isInitialized: false,
 };
-const initialState: InitialStateType = {
-  isInitialized: false
-};
+
+export type InitialStateType = typeof initialState;
 
 export default (
   state = initialState,
   action: ActionsTypes
 ): InitialStateType => {
   switch (action.type) {
-    case INITIALIZED_SUCCESS:
+    case "APP:INITIALIZE_APP":
       return {
         ...state,
-        isInitialized: true
+        isInitialized: true,
       };
     default:
       return state;

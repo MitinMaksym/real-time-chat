@@ -1,64 +1,54 @@
 import { UserDataType } from "./../../types/types";
-import { AxiosResponse } from "axios";
 import { axios } from "../../core";
 
-type SignUserInResType = {
-  status: string;
-  token: string;
-};
+type StatusType = "success" | "error";
 
-type GetUserInfoResType = {
+type SignUserInResType = { token: string; status: StatusType };
+
+export type GetUserInfoResType = {
   user: UserDataType;
-  status: string;
+  status: StatusType;
 };
 
 type SignUserUpResType = {
   result: UserDataType;
-  status: "succes" | "error";
+  status: StatusType;
 };
 
 type FindUsersResType = {
   users: Array<UserDataType>;
-  status: string;
+  status: StatusType;
 };
 export default {
-  signUserIn: (postData: { email: string; password: string }) => {
-    return axios
-      .post("user/login", postData)
-      .then((res: AxiosResponse<SignUserInResType>) => {
-        return res.data;
-      });
+  signUserIn: async (postData: { email: string; password: string }) => {
+    let response = await axios.post<SignUserInResType>("user/login", postData);
+    return response.data;
   },
 
-  getUserInfo: () => {
-    return axios
-      .get("user/me")
-      .then((res: AxiosResponse<GetUserInfoResType>) => {
-        return res.data;
-      });
+  getUserInfo: async () => {
+    let response = await axios.get<GetUserInfoResType>("user/me");
+
+    return response.data;
   },
-  signUserUp: (postData: {
+  signUserUp: async (postData: {
     fullname: string;
     email: string;
     password: string;
   }) => {
-    return axios
-      .post("user/registration", postData)
-      .then((res: AxiosResponse<SignUserUpResType>) => {
-        return res.data;
-      });
+    let response = await axios.post<SignUserUpResType>(
+      "user/registration",
+      postData
+    );
+    return response.data;
   },
   verifyHash: async (hash: string) => {
-    let data: AxiosResponse<{
-      message: string;
-      status: string;
-    }> = await axios.get(`user/verify?hash=${hash}`);
+    let data = await axios.get<{ message: string; status: StatusType }>(
+      `user/verify?hash=${hash}`
+    );
     return data.data;
   },
   findUsers: async (query: string) => {
-    let data: AxiosResponse<FindUsersResType> = await axios.get(
-      `user/find?query=${query}`
-    );
+    let data = await axios.get<FindUsersResType>(`user/find?query=${query}`);
     return data.data;
-  }
+  },
 };

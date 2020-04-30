@@ -1,10 +1,12 @@
+import { fetchLoginData } from "./../../../redux/actions/user";
+import { fetchUserData } from "../../../redux/actions/user";
 import { AppStateType } from "./../../../redux/reduces/index";
 import LoginForm from "../components/LoginForm";
 import { withFormik, FormikErrors } from "formik";
 import validateFunc from "../../../utils/validations";
 import store from "../../../redux/store";
-import { userActions } from "../../../redux/actions";
 import { connect } from "react-redux";
+import { userActions, appActions } from "../../../redux/actions";
 
 export interface LoginFormValues {
   email: string;
@@ -20,37 +22,32 @@ type MapStatePropsType = {
 };
 const LoginFormContainer = withFormik<FormProps, LoginFormValues>({
   mapPropsToValues: () => ({ email: "", password: "" }),
-  validate: values => {
+  validate: (values) => {
     let errors: FormikErrors<LoginFormValues> = {};
     validateFunc({ isAuth: true, errors, values });
     return errors;
   },
 
   handleSubmit: async (values, props) => {
-    console.log(props);
     try {
-      let data = await store.dispatch(userActions.fetchLoginData(values));
-      console.log(values);
+      let data = await fetchLoginData(values);
       props.setSubmitting(false);
-      if (data.status === "success") {
-        const data = await store.dispatch(userActions.fetchUserData());
-        if (data.status === "success") {
-          await store.dispatch({ type: "USER:SET_IS_AUTH", payload: true });
-          await store.dispatch({ type: "INITIALIZED_SUCCESS" });
-          //@ts-ignore
-          //props.props.history.push("/");
-        }
+      if (data && data.status === "success") {
+        ///@ts-ignore
+        store.dispatch(fetchUserData());
+
+        store.dispatch(appActions.initializeAppAC());
       }
     } catch (err) {
       console.log(err);
     }
   },
-  displayName: "LoginForm"
+  displayName: "LoginForm",
 })(LoginForm);
 
 let mapStateToProps = (state: AppStateType): MapStatePropsType => {
   return {
-    isAuth: state.user.isAuth
+    isAuth: state.user.isAuth,
   };
 };
 

@@ -1,31 +1,30 @@
 import { GetStateType } from "./../../types/types";
 import { AppStateType } from "./../reduces/index";
-import { userActions } from ".";
-import { INITIALIZED_SUCCESS } from "../reduces/app";
 import { ThunkAction } from "redux-thunk";
+import { fetchUserData } from "./user";
+import { InferActionsTypes } from "../store";
 
-type InitializedSuccessActionType = {
-  type: typeof INITIALIZED_SUCCESS;
-};
+export type ActionsTypes = InferActionsTypes<typeof actions>;
 
-export type ActionsTypes = InitializedSuccessActionType;
-
-//type DispatchType = Dispatch<InitializedSuccessType>
 const actions = {
-  initializeApp: (): ThunkAction<void, AppStateType, unknown, ActionsTypes> => (
-    dispatch,
-    getState: GetStateType
-  ): void => {
-    let isAuth = getState().user.isAuth;
-    if (isAuth) {
-      let promise = dispatch(userActions.fetchUserData());
-      Promise.all([promise]).then((data) => {
-        dispatch({ type: INITIALIZED_SUCCESS });
-      });
-    } else {
-      dispatch({ type: INITIALIZED_SUCCESS });
-    }
-  },
+  initializeAppAC: () => ({ type: "APP:INITIALIZE_APP" } as const),
 };
 
+//------------------------THUNK CREATORS
+export const initializeApp = (): ThunkAction<
+  void,
+  AppStateType,
+  unknown,
+  ActionsTypes
+> => (dispatch, getState) => {
+  let isAuth = getState().user.isAuth;
+  if (isAuth) {
+    let promise = dispatch(fetchUserData());
+    Promise.all([promise]).then((data) => {
+      dispatch(actions.initializeAppAC());
+    });
+  } else {
+    dispatch(actions.initializeAppAC());
+  }
+};
 export default actions;

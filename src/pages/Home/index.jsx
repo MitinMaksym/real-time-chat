@@ -3,17 +3,32 @@ import { Icon } from "antd";
 import { Messages, ChatInput, Status, Sidebar } from "../../containers";
 import { withRouter } from "react-router-dom";
 import { connect } from "react-redux";
-import { dialogsActions, userActions } from "../../redux/actions";
+import {
+  dialogsActions,
+  userActions,
+  messagesActions,
+} from "../../redux/actions";
 import "./Home.scss";
+import { signOut } from "../../redux/actions/user";
 
 function Home(props) {
-  let { setCurrentDialog, signOut, isAuth, fullname, userId } = props;
+  let {
+    setCurrentDialog,
+    setDialogsItems,
+    setMessagesItems,
+    isAuth,
+    fullname,
+    signOut,
+  } = props;
   let onSignOut = () => {
     let check = window.confirm(
       `${fullname}, вы уверенны что хотите выйти из аккаунта?`
     );
     if (check) {
       signOut();
+      setDialogsItems([]);
+      setMessagesItems([]);
+      setCurrentDialog("");
     }
   };
   useEffect(() => {
@@ -70,8 +85,10 @@ export default withRouter(
       userId: user.data._id,
     }),
     {
-      ...dialogsActions,
-      ...userActions,
+      setCurrentDialog: dialogsActions.setCurrentDialog,
+      setDialogsItems: dialogsActions.setItems,
+      signOut,
+      setMessagesItems: messagesActions.setMessages,
     }
   )(Home)
 );

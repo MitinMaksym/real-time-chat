@@ -7,6 +7,7 @@ import { connect } from "react-redux";
 import { AppStateType } from "../redux/reduces";
 
 import socket from "../core/socket";
+import { fetchDialogs } from "../redux/actions/dialogs";
 
 type OwnPropsType = {};
 
@@ -92,7 +93,7 @@ export default connect<
   OwnPropsType,
   AppStateType
 >(mapStateToProps, {
-  fetchDialogs: dialogsActions.fetchDialogs,
+  fetchDialogs: fetchDialogs,
   addNewDialog: dialogsActions.addNewDialog,
   updateDialog: dialogsActions.updateDialog,
 })(Dialogs);

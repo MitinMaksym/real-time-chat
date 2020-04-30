@@ -6,37 +6,35 @@ export const ADD_MESSAGE = "MESSAGES:ADD_MESSAGE";
 export const REMOVE_MESSAGE = "MESSAGES:REMOVE_MESSAGE";
 export const UPDATE_UNREAD_MESSAGES = "MESSAGES:UPDATE_UNREAD_MESSAGES";
 
-export type InitialStateType = {
-  items: Array<MessageType>;
-  isLoading: boolean;
-};
-const initialState: InitialStateType = {
-  items: [],
+const initialState = {
+  items: [] as Array<MessageType>,
   isLoading: false,
 };
+
+export type InitialStateType = typeof initialState;
 
 export default (
   state = initialState,
   action: ActionsTypes
 ): InitialStateType => {
   switch (action.type) {
-    case SET_ITEMS:
+    case "MESSAGES:SET_ITEMS":
       return {
         ...state,
         items: action.payload,
       };
 
-    case SET_IS_LOADING:
+    case "MESSAGES:SET_IS_LOADING":
       return {
         ...state,
         isLoading: action.payload,
       };
-    case ADD_MESSAGE:
+    case "MESSAGES:ADD_MESSAGE":
       return {
         ...state,
         items: [...state.items, action.payload],
       };
-    case UPDATE_UNREAD_MESSAGES:
+    case "MESSAGES:UPDATE_UNREAD_MESSAGES":
       let oldItems = [...state.items];
       let newItems = oldItems.map((item, idx) => {
         if (!item.readed) {
@@ -49,7 +47,7 @@ export default (
         ...state,
         items: newItems,
       };
-    case REMOVE_MESSAGE:
+    case "MESSAGES:REMOVE_MESSAGE":
       return {
         ...state,
         items: state.items.filter((message) => message._id !== action.payload),

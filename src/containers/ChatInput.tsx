@@ -5,7 +5,7 @@ import { attachmentsActions } from "../redux/actions";
 import { filesApi, messagesApi } from "../utils/api";
 import { AttachmentServerType, AttachmentType } from "../types/types";
 import { AppStateType } from "../redux/reduces";
-import socket from "../core/socket";
+import userSocket from "../core/socket";
 
 type OwnPropsType = {};
 
@@ -71,7 +71,7 @@ const ChatInput: React.FC<Props> = ({
       const file = new File([e.data], "audio.webm");
       setLoading(true);
       filesApi
-        .file(file)
+        .upload(file)
         .then((data: { status: string; file: AttachmentServerType }) => {
           if (data.status === "success" && data.file._id) {
             sendAudio(data.file._id).then(() => {
@@ -111,7 +111,7 @@ const ChatInput: React.FC<Props> = ({
     e: React.KeyboardEvent<HTMLTextAreaElement> &
       React.MouseEvent<HTMLElement, MouseEvent>
   ) => {
-    socket.emit("DIALOGS:TYPING", { currentDialogId, userId });
+    userSocket.emit("DIALOGS:TYPING", { currentDialogId, userId });
     if (value.length || attachments.length) {
       if (e.keyCode === 13) {
         onSendMessage(e);
@@ -160,7 +160,7 @@ const ChatInput: React.FC<Props> = ({
       setAttachments(uploaded);
       setIsDisabled(true);
       // eslint-disable-next-line no-loop-func
-      await attachmentsActions
+      await filesApi
         .upload(file)
         .then((data: { file: AttachmentServerType; status: string }) => {
           if (data.status === "success") {

@@ -19,9 +19,9 @@ export default withFormik<FormProps, RegisterFormValues>({
     email: "",
     password: "",
     password_2: "",
-    fullname: ""
+    fullname: "",
   }),
-  validate: values => {
+  validate: (values) => {
     let errors = {};
     validateFunc({ isAuth: false, errors, values });
     return errors;
@@ -43,18 +43,18 @@ export default withFormik<FormProps, RegisterFormValues>({
           type: "error",
           message: "Ошибка при регистрации",
           description: "Такой пользователь уже зарегистрирован",
-          duration: 1
+          duration: 1,
         });
       } else {
         openNotification({
           type: "error",
           message: "Server Error",
           description: "Something went wrong",
-          duration: 1
+          duration: 1,
         });
       }
       setSubmitting(false);
     }
   },
-  displayName: "RegisterForm"
+  displayName: "RegisterForm",
 })(RegisterForm);

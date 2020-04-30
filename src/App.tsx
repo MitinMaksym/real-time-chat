@@ -3,9 +3,9 @@ import { Route, Switch } from "react-router-dom";
 import { connect } from "react-redux";
 import { Spin, Result } from "antd";
 
-import { appActions } from "./redux/actions";
 import { Auth, Home } from "./pages";
 import { AppStateType } from "./redux/reduces";
+import { initializeApp } from "./redux/actions/app";
 
 type MapStatePropsType = {
   isInitialized: boolean;
@@ -78,4 +78,4 @@ export default connect<
   MapDisptchPropsType,
   OwnPropsType,
   AppStateType
->(mapStateToProps, { initializeApp: appActions.initializeApp })(App);
+>(mapStateToProps, { initializeApp })(App);

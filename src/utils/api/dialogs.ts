@@ -1,31 +1,23 @@
 import { AxiosResponse } from "axios";
 import { DialogType } from "./../../types/types";
-import { CreateDialogDataActionType } from "./../../redux/actions/dialogs";
 import { axios } from "../../core";
 
-type CreateDialogResponseType = {
+type CreateDialogResType = {
   dialog: DialogType;
   status: string;
 };
 
-type getAllDialogsResponseType = Array<DialogType>;
-
 export default {
   getAll: () =>
-    axios
-      .get("dialogs")
-      .then((res: AxiosResponse<getAllDialogsResponseType>) => {
-        return res.data;
-      }),
+    axios.get<Array<DialogType>>("dialogs").then((res) => {
+      return res.data;
+    }),
 
-  createDialog: async (data: CreateDialogDataActionType) => {
-    let response: AxiosResponse<CreateDialogResponseType> = await axios.post(
-      "dialogs",
-      {
-        partner: data.partner,
-        text: data.text
-      }
-    );
+  createDialog: async (data: { partner: string; text: string }) => {
+    let response = await axios.post<CreateDialogResType>("dialogs", {
+      partner: data.partner,
+      text: data.text,
+    });
     return response.data;
-  }
+  },
 };

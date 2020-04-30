@@ -4,11 +4,10 @@ import { AttachmentType } from "../../types/types";
 
 export const SET_ATTACHMENTS = "ATTACHMENTS:SET_ATTACHMENTS";
 export const REMOVE_ATTACHMENT = "ATTACHMENTS:REMOVE_ATTACHMENT";
-export type InitialStateType = {
-  items: Array<AttachmentServerType & AttachmentType>;
-};
-const initialState: InitialStateType = {
-  items: []
+export type InitialStateType = typeof initialState;
+
+const initialState = {
+  items: [] as Array<AttachmentServerType | AttachmentType>,
 };
 
 export default (
@@ -16,17 +15,17 @@ export default (
   action: ActionsTypes
 ): InitialStateType => {
   switch (action.type) {
-    case SET_ATTACHMENTS:
+    case "ATTACHMENTS:SET_ATTACHMENTS":
       return {
         ...state,
-        items: action.payload
+        items: action.payload,
       };
-    case REMOVE_ATTACHMENT:
+    case "ATTACHMENTS:REMOVE_ATTACHMENT":
       return {
         ...state,
         items: state.items.filter(
           (item: any) => item.uid !== action.payload.uid
-        )
+        ),
       };
     default:
       return state;

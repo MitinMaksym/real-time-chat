@@ -1,45 +1,36 @@
+import { DialogType } from "./../../types/types";
 import { ActionsTypes } from "./../actions/dialogs";
-import { DialogType } from "../../types/types";
 
-export const SET_ITEMS = "DIALOGS:SET_ITEMS";
-export const SET_CURRENT_DIALOG = "DIALOGS:SET_CURRENT_DIALOG";
-export const UPDATE_DIALOG = "DIALOGS:UPDATE_DIALOG";
-export const SET_IS_LOADING = "DIALOGS:SET_IS_LOADING";
-export const ADD_NEW_DIALOG = "ADD_NEW_DIALOG";
-
-export type InitialStateType = {
-  items: Array<DialogType>;
-  currentDialogId: string;
-  isLoading: boolean;
-};
-const initialState: InitialStateType = {
-  items: [],
+const initialState = {
+  items: [] as Array<DialogType>,
   currentDialogId: "",
   isLoading: false,
 };
+
+export type InitialStateType = typeof initialState;
 
 export default (
   state = initialState,
   action: ActionsTypes
 ): InitialStateType => {
   switch (action.type) {
-    case SET_ITEMS:
+    case "DIALOGS:SET_ITEMS":
       return {
         ...state,
         items: action.payload,
       };
-    case ADD_NEW_DIALOG:
+    case "DIALOGS:ADD_NEW_DIALOG":
       return {
         ...state,
         items: [...state.items, action.payload],
       };
 
-    case SET_CURRENT_DIALOG:
+    case "DIALOGS:SET_CURRENT_DIALOG":
       return {
         ...state,
         currentDialogId: action.payload,
       };
-    case UPDATE_DIALOG:
+    case "DIALOGS:UPDATE_DIALOG":
       let newItems: Array<DialogType> = state.items.map((item) => {
         if (item._id === action.payload._id) {
           item = action.payload;
@@ -51,7 +42,7 @@ export default (
         items: newItems,
       };
 
-    case SET_IS_LOADING:
+    case "DIALOGS:SET_IS_LOADING":
       return {
         ...state,
         isLoading: action.payload,

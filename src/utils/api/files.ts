@@ -2,19 +2,19 @@ import { AxiosResponse } from "axios";
 import { AttachmentServerType } from "./../../types/types";
 import { axios } from "../../core";
 
-type fileResType = {
+type FileResType = {
   status: string;
   file: AttachmentServerType;
 };
 export default {
-  file: async (file: File) => {
+  upload: async (file: File) => {
     const formData = new FormData();
     formData.append("file", file);
-    let data: AxiosResponse<fileResType> = await axios.post("files", formData, {
+    let data = await axios.post<FileResType>("files", formData, {
       headers: {
-        "content-type": "multipart/form-data"
-      }
+        "content-type": "multipart/form-data",
+      },
     });
     return data.data;
-  }
+  },
 };
