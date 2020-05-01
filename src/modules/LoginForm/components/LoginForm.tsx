@@ -21,7 +21,6 @@ const LoginForm = (props: OtherProps & FormikProps<LoginFormValues>) => {
     isSubmitting,
     isAuth,
   } = props;
-  console.log(isAuth);
   if (isAuth) {
     return <Redirect to="/" />;
   }

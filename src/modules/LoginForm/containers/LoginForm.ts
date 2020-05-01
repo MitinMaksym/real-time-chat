@@ -6,7 +6,7 @@ import { withFormik, FormikErrors } from "formik";
 import validateFunc from "../../../utils/validations";
 import store from "../../../redux/store";
 import { connect } from "react-redux";
-import { userActions, appActions } from "../../../redux/actions";
+import { appActions } from "../../../redux/actions";
 
 export interface LoginFormValues {
   email: string;
