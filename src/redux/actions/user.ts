@@ -1,21 +1,14 @@
 import { InferActionsTypes } from "./../store";
 import { AppStateType } from "./../reduces/index";
-import { ThunkAction } from "redux-thunk";
-import { UserDataType } from "./../../types/types";
+import { UserDataType, BaseThunkType } from "./../../types/types";
 import { userApi } from "../../utils/api";
 import { openNotification } from "../../utils/helpers";
-import { dialogsActions, messagesActions } from "./index";
 import axios from "axios";
 import { Dispatch } from "redux";
 
 export type ActionsTypes = InferActionsTypes<typeof actions>;
 
-export type UsersThunkType = ThunkAction<
-  Promise<void>,
-  AppStateType,
-  unknown,
-  ActionsTypes
->;
+export type UsersThunkType = BaseThunkType<ActionsTypes>;
 const actions = {
   setAuth: (payload: boolean) =>
     ({

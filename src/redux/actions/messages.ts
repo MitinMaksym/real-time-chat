@@ -1,18 +1,11 @@
-import { UPDATE_UNREAD_MESSAGES } from "./../reduces/messages";
-import { AppStateType } from "./../reduces/index";
 import { MessageType } from "./../../types/types";
 import { messagesApi } from "../../utils/api";
-import { ThunkAction } from "redux-thunk";
 import { InferActionsTypes } from "../store";
+import { BaseThunkType } from "../../types/types";
 
 export type ActionsTypes = InferActionsTypes<typeof actions>;
 
-type MessagesThunkType = ThunkAction<
-  Promise<void>,
-  AppStateType,
-  unknown,
-  ActionsTypes
->;
+type MessagesThunkType = BaseThunkType<ActionsTypes>;
 
 //----------------------ACTIONS CREATORS
 

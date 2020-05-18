@@ -1,17 +1,10 @@
-import { AppStateType } from "./../reduces/index";
 import { DialogType } from "./../../types/types";
 import { dialogsApi } from "../../utils/api";
-import { ThunkAction } from "redux-thunk";
 import { InferActionsTypes } from "../store";
-
+import { BaseThunkType } from "../../types/types";
 export type ActionsTypes = InferActionsTypes<typeof actions>;
 
-type DialogsThunkType = ThunkAction<
-  Promise<void>,
-  AppStateType,
-  unknown,
-  ActionsTypes
->;
+type DialogsThunkType = BaseThunkType<ActionsTypes>;
 
 const actions = {
   setCurrentDialog: (id: string) =>

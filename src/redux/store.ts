@@ -18,11 +18,11 @@ const composeEnhancers =
 
 const enhancer = composeEnhancers(applyMiddleware(...middleware));
 
-type PropertiesType<T> = T extends { [key: string]: infer U } ? U : never;
-
-export type InferActionsTypes<
-  T extends { [key: string]: (...args: any[]) => any }
-> = ReturnType<PropertiesType<T>>;
+export type InferActionsTypes<T> = T extends {
+  [key: string]: (...args: any[]) => infer U;
+}
+  ? U
+  : never;
 
 let store = createStore(rootReducer, enhancer);
 

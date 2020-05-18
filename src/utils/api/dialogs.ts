@@ -1,4 +1,3 @@
-import { AxiosResponse } from "axios";
 import { DialogType } from "./../../types/types";
 import { axios } from "../../core";
 

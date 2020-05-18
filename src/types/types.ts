@@ -1,4 +1,6 @@
 import { AppStateType } from "./../redux/reduces/index";
+import { ThunkAction } from "redux-thunk";
+import { Action } from "redux";
 export type UserDataType = {
   _id: string;
   confirmed: boolean;
@@ -55,4 +57,9 @@ export type MessageType = {
   __v: number;
 };
 
-export type GetStateType = () => AppStateType;
+export type BaseThunkType<A extends Action, R = Promise<void>> = ThunkAction<
+  R,
+  AppStateType,
+  unknown,
+  A
+>;
