@@ -1,50 +1,48 @@
-import React from "react";
-import { IconReaded } from "..";
-import Avatar from "../Avatar";
+import React from 'react'
+import { IconReaded } from '..'
+import Avatar from '../Avatar'
 
-import { Link } from "react-router-dom";
-import { MessageType, UserDataType, DialogType } from "../../types/types";
-import classNames from "classnames";
-import isToday from "date-fns/isToday";
+import { Link } from 'react-router-dom'
+import { MessageType, UserDataType, DialogType } from '../../types/types'
+import classNames from 'classnames'
+import isToday from 'date-fns/isToday'
 
-import format from "date-fns/format";
-import { Icon } from "antd";
-const Render = require("react-emoji-render");
-const Emoji = Render.Emojione;
+import format from 'date-fns/format'
+import { Icon } from 'antd'
+const Render = require('react-emoji-render')
+const Emoji = Render.Emojione
 
 const getMessageTime = (create_at: Date) => {
   if (isToday(new Date(create_at))) {
-    return format(new Date(create_at), "HH:mm");
+    return format(new Date(create_at), 'HH:mm')
   } else {
-    return format(new Date(create_at), "dd.MM.yyyy");
+    return format(new Date(create_at), 'dd.MM.yyyy')
   }
-};
+}
 
 const renderLastMessage = (message: MessageType, userId: string) => {
-  let text = "";
+  let text = ''
   if (!message.text && message.attachments) {
-    text = "прикрепленный файл";
+    text = 'прикрепленный файл'
   } else {
-    text = message.text;
+    text = message.text
   }
 
-  return (
-    <Emoji text={`${message.user._id === userId ? "Вы: " : ""} ${text}`} />
-  );
-};
-type MapDispatchPropsType = {};
+  return <Emoji text={`${message.user._id === userId ? 'Вы: ' : ''} ${text}`} />
+}
+type MapDispatchPropsType = {}
 type OwnPropsType = {
-  key: string;
-  _id: string;
-  isMe: boolean;
-  partner: UserDataType;
-  author: UserDataType;
-  lastMessage: MessageType;
-  currentDialogId: string;
-  userId: string;
-};
+  key: string
+  _id: string
+  isMe: boolean
+  partner: UserDataType
+  author: UserDataType
+  lastMessage: MessageType
+  currentDialogId: string
+  userId: string
+}
 
-type Props = MapDispatchPropsType & OwnPropsType;
+type Props = MapDispatchPropsType & OwnPropsType
 const DialogItem: React.FC<Props> = ({
   _id,
   isMe,
@@ -52,15 +50,15 @@ const DialogItem: React.FC<Props> = ({
   lastMessage,
   author,
   currentDialogId,
-  userId,
+  userId
 }) => {
-  let user: UserDataType = isMe ? partner : author;
+  let user: UserDataType = isMe ? partner : author
   return (
     <Link to={`/dialog/${_id}`}>
       <div
-        className={classNames("dialogs__item", {
-          "dialogs__item--online": user.isOnline,
-          "dialogs__item--active": currentDialogId === _id,
+        className={classNames('dialogs__item', {
+          'dialogs__item--online': user.isOnline,
+          'dialogs__item--active': currentDialogId === _id
         })}
       >
         <div className="dialogs__item-avatar">
@@ -92,7 +90,7 @@ const DialogItem: React.FC<Props> = ({
         </div>
       </div>
     </Link>
-  );
-};
+  )
+}
 
-export default DialogItem;
+export default DialogItem

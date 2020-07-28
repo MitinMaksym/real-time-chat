@@ -1,6 +1,6 @@
-import io from "socket.io-client";
+import io from 'socket.io-client'
 
-const socket = io("http://localhost:3003/");
+const socket = io('https://my-messager-api.herokuapp.com/')
 
-export default socket;
+export default socket
 //https://my-messager-api.herokuapp.com/
