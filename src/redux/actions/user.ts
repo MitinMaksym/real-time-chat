@@ -42,7 +42,8 @@ export const fetchUserData = () => async (
       axios.defaults.headers.common['token'] = ''
       dispatch(actions.setAuth(false))
     } else {
-      throw new Error(err)
+      dispatch(actions.setAuth(false))
+      console.log(err)
     }
   }
 }
