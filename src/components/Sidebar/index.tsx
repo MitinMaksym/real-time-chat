@@ -1,32 +1,31 @@
-import React from "react";
+import React from 'react'
 
-import { Dialogs } from "../../containers";
-import { UserDataType } from "../../types/types";
+import { Dialogs } from '../../containers'
+import { UserDataType } from '../../types/types'
 
-import { Button, Icon, Modal, Select, Form, Input } from "antd";
+import { Button, Icon, Modal, Select, Form, Input } from 'antd'
 
-import "./Sidebar.scss";
+import './Sidebar.scss'
 
-const { Option } = Select;
+const { Option } = Select
 
 type Props = {
-  isLoading: boolean;
-  userId: string;
-  visible: boolean;
-  modalText: string;
-  partner: string;
-  newMessageText: string;
-  users: Array<UserDataType>;
-  selectedInputValue: string;
+  isLoading: boolean
+  visible: boolean
+  modalText: string
+  partner: string
+  newMessageText: string
+  users: Array<UserDataType>
+  selectedInputValue: string
 
-  showModal: () => void;
-  handleCancel: () => void;
-  handleOk: () => void;
-  onInputSelect: (value: string) => void;
-  onInputChange: (value: string) => void;
-  onSearch: (value: string) => void;
-  onAddNewMessage: (e: React.ChangeEvent<HTMLTextAreaElement>) => void;
-};
+  showModal: () => void
+  handleCancel: () => void
+  handleOk: () => void
+  onInputSelect: (value: string) => void
+  onInputChange: (value: string) => void
+  onSearch: (value: string) => void
+  onAddNewMessage: (e: React.ChangeEvent<HTMLTextAreaElement>) => void
+}
 let Sidebar: React.FC<Props> = (props) => {
   let {
     isLoading,
@@ -42,12 +41,11 @@ let Sidebar: React.FC<Props> = (props) => {
     onAddNewMessage,
     partner,
     newMessageText,
-    selectedInputValue,
-  } = props;
-
+    selectedInputValue
+  } = props
   let options = users.map((user) => (
     <Option key={user._id}>{user.fullname}</Option>
-  ));
+  ))
   return (
     <div className="chat__sidebar">
       <div className="chat__sidebar-header">
@@ -79,7 +77,7 @@ let Sidebar: React.FC<Props> = (props) => {
               onClick={handleOk}
             >
               Создать
-            </Button>,
+            </Button>
           ]}
         >
           <p>{modalText}</p>
@@ -88,7 +86,7 @@ let Sidebar: React.FC<Props> = (props) => {
             <Form.Item label="Введите имя пользователя или E-Mail">
               <Select
                 showSearch
-                style={{ width: "100%" }}
+                style={{ width: '100%' }}
                 optionFilterProp="children"
                 onChange={onInputChange}
                 onSelect={onInputSelect}
@@ -114,6 +112,6 @@ let Sidebar: React.FC<Props> = (props) => {
         </Modal>
       </div>
     </div>
-  );
-};
-export default Sidebar;
+  )
+}
+export default Sidebar

@@ -1,42 +1,40 @@
-import React, { useState, useEffect, useCallback } from "react";
-import { ChatInput as ChatInputBase } from "../components";
-import { connect } from "react-redux";
-import { attachmentsActions } from "../redux/actions";
-import { filesApi, messagesApi } from "../utils/api";
-import { AttachmentServerType, AttachmentType } from "../types/types";
-import { AppStateType } from "../redux/reduces";
-import userSocket from "../core/socket";
+import React, { useState, useEffect, useCallback } from 'react'
+import { ChatInput as ChatInputBase } from '../components'
+import { connect } from 'react-redux'
+import { attachmentsActions } from '../redux/actions'
+import { filesApi, messagesApi } from '../utils/api'
+import { AttachmentServerType, AttachmentType } from '../types/types'
+import { AppStateType } from '../redux/reduces'
+import userSocket from '../core/socket'
 
-type OwnPropsType = {};
+type OwnPropsType = {}
 
 type MapStatePropsType = {
-  currentDialogId: string;
-  attachments: Array<AttachmentType>;
-  userId: string;
-};
+  currentDialogId: string
+  attachments: Array<AttachmentType>
+  userId: string
+}
 
 type MapDispatchPropsType = {
-  setAttachments: (files: Array<AttachmentType>) => void;
-  removeAttachment: (file: AttachmentType) => void;
-};
+  setAttachments: (files: Array<AttachmentType>) => void
+  removeAttachment: (file: AttachmentType) => void
+}
 
-type Props = OwnPropsType & MapDispatchPropsType & MapStatePropsType;
+type Props = OwnPropsType & MapDispatchPropsType & MapStatePropsType
 
 const ChatInput: React.FC<Props> = ({
   currentDialogId,
   setAttachments,
   removeAttachment,
   attachments,
-  userId,
+  userId
 }) => {
-  const [value, setValue] = useState("");
-  const [isLoading, setLoading] = useState(false);
-  const [emojiVisible, setEmojiVisible] = useState(false);
-  const [isRecording, setIsRecording] = useState(false);
-  let [isDisabled, setIsDisabled] = useState(false);
-  const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(
-    null
-  );
+  const [value, setValue] = useState('')
+  const [isLoading, setLoading] = useState(false)
+  const [emojiVisible, setEmojiVisible] = useState(false)
+  const [isRecording, setIsRecording] = useState(false)
+  let [isDisabled, setIsDisabled] = useState(false)
+  const [mediaRecorder, setMediaRecorder] = useState<MediaRecorder | null>(null)
 
   window.navigator.getUserMedia =
     window.navigator.getUserMedia ||
@@ -45,178 +43,175 @@ const ChatInput: React.FC<Props> = ({
     //@ts-ignore
     window.navigator.msGetUserMedia ||
     //@ts-ignore
-    window.navigator.webkitGetUserMedia;
+    window.navigator.webkitGetUserMedia
 
   const onRecord = () => {
     if (navigator.getUserMedia) {
-      navigator.getUserMedia({ audio: true }, onRecording, onError);
+      navigator.getUserMedia({ audio: true }, onRecording, onError)
     }
-  };
+  }
 
   const onRecording = (stream: MediaStream) => {
-    const recorder: MediaRecorder = new MediaRecorder(stream);
-    setMediaRecorder(recorder);
+    const recorder: MediaRecorder = new MediaRecorder(stream)
+    setMediaRecorder(recorder)
 
-    recorder.start();
+    recorder.start()
 
     recorder.onstart = () => {
-      setIsRecording(true);
-    };
+      setIsRecording(true)
+    }
 
     recorder.onstop = () => {
-      setIsRecording(false);
-    };
+      setIsRecording(false)
+    }
 
     recorder.ondataavailable = (e) => {
-      const file = new File([e.data], "audio.webm");
-      setLoading(true);
+      const file = new File([e.data], 'audio.webm')
+      setLoading(true)
       filesApi
         .upload(file)
         .then((data: { status: string; file: AttachmentServerType }) => {
-          if (data.status === "success" && data.file._id) {
+          if (data.status === 'success' && data.file._id) {
             sendAudio(data.file._id).then(() => {
-              setLoading(false);
-            });
+              setLoading(false)
+            })
           }
-        });
-    };
-  };
+        })
+    }
+  }
 
   const onError = (err: MediaStreamError) => {
-    throw new Error(err.toString());
-  };
+    throw new Error(err.toString())
+  }
 
   const sendAudio = (audioId: string): Promise<any> => {
     return messagesApi.sendMessage({
-      text: "",
+      text: '',
       currentDialogId,
-      attachments: [audioId],
-    });
-  };
+      attachments: [audioId]
+    })
+  }
   const onSendMessage = (e: React.MouseEvent<HTMLElement, MouseEvent>) => {
     if (isRecording && mediaRecorder) {
-      mediaRecorder.stop();
+      mediaRecorder.stop()
     } else if (value || attachments.length) {
       messagesApi.sendMessage({
         text: value,
         currentDialogId,
 
-        attachments: attachments.map((file) => (file.uid ? file.uid : "")),
-      });
-      setValue("");
-      setAttachments([]);
+        attachments: attachments.map((file) => (file.uid ? file.uid : ''))
+      })
+      setValue('')
+      setAttachments([])
     }
-  };
+  }
   const handleSendMessage = (
     e: React.KeyboardEvent<HTMLTextAreaElement> &
       React.MouseEvent<HTMLElement, MouseEvent>
   ) => {
-    userSocket.emit("DIALOGS:TYPING", { currentDialogId, userId });
+    userSocket.emit('DIALOGS:TYPING', { currentDialogId, userId })
     if (value.length || attachments.length) {
       if (e.keyCode === 13) {
-        onSendMessage(e);
+        onSendMessage(e)
       }
     }
-  };
+  }
 
-  const handleStartRecording = () => {
-    setIsRecording(true);
-  };
   const onStopRecording = () => {
-    setIsRecording(false);
-  };
+    setIsRecording(false)
+  }
   //----------------------EMOJI
 
   const onOutSideClick = (e: any, el: HTMLDivElement | null) => {
     if (el && !el.contains(e.target)) {
-      setEmojiVisible(false);
+      setEmojiVisible(false)
     }
-  };
+  }
   const toggleEmoji = () => {
-    setEmojiVisible(!emojiVisible);
-  };
+    setEmojiVisible(!emojiVisible)
+  }
   const addEmoji = (emoji: any) => {
-    setValue(value + emoji.native);
-  };
+    setValue(value + emoji.native)
+  }
   //---------------------FILE
 
   let selectFile = async (files: FileList): Promise<void> => {
     let uploaded: Array<
       AttachmentType & AttachmentServerType
-    > = attachments.length ? attachments : [];
+    > = attachments.length ? attachments : []
     for (let i = 0; i < files.length; i++) {
-      let file: File = files[i];
-      let uid: string = Math.floor(Math.random() * 1000).toString();
+      let file: File = files[i]
+      let uid: string = Math.floor(Math.random() * 1000).toString()
       uploaded = [
         ...uploaded,
         {
           uid,
           name: file.name,
-          status: "done",
+          status: 'done',
           url:
-            "https://cdn.lowgif.com/small/dc86e54ceca03be4-loading-spinner-animated-gif-83320-mediabin.gif",
-        },
-      ];
-      setAttachments(uploaded);
-      setIsDisabled(true);
+            'https://cdn.lowgif.com/small/dc86e54ceca03be4-loading-spinner-animated-gif-83320-mediabin.gif'
+        }
+      ]
+      setAttachments(uploaded)
+      setIsDisabled(true)
       // eslint-disable-next-line no-loop-func
       await filesApi
         .upload(file)
         .then((data: { file: AttachmentServerType; status: string }) => {
-          if (data.status === "success") {
+          if (data.status === 'success') {
             uploaded = uploaded.map((item: AttachmentType) => {
               if (item.uid === uid && data.file.url) {
                 return {
                   uid: data.file._id,
                   name: data.file.filename,
-                  status: "done",
-                  url: data.file.url.replace(/http/, "https"),
-                };
+                  status: 'done',
+                  url: data.file.url.replace(/http/, 'https')
+                }
               }
-              return item;
-            });
+              return item
+            })
           }
-        });
+        })
     }
-    setAttachments(uploaded);
-    setIsDisabled(false);
-  };
+    setAttachments(uploaded)
+    setIsDisabled(false)
+  }
   const inputRef = useCallback(
     (node: HTMLInputElement) => {
       if (node) {
-        let margin = 40;
-        let elHeight = node.offsetHeight + margin + 93.5;
+        let margin = 40
+        let elHeight = node.offsetHeight + margin + 93.5
 
         if (attachments.length > 0) {
-          elHeight = elHeight + 112;
+          elHeight = elHeight + 112
         }
         const el: HTMLDivElement | null = document.querySelector(
-          ".chat__dialog-messages"
-        );
+          '.chat__dialog-messages'
+        )
         if (el) {
-          el.style.height = `calc(100% - ${elHeight}px)`;
+          el.style.height = `calc(100% - ${elHeight}px)`
           if (value.length === 0 && !attachments.length) {
-            el.style.height = `calc(100% - 185.5px)`;
+            el.style.height = `calc(100% - 185.5px)`
           }
         }
       }
     },
     [value, attachments]
-  );
+  )
 
   useEffect(() => {
     const el: HTMLDivElement | null = document.querySelector(
-      ".chat-input__smile-btn"
-    );
-    document.addEventListener("click", (e) => onOutSideClick(e, el));
+      '.chat-input__smile-btn'
+    )
+    document.addEventListener('click', (e) => onOutSideClick(e, el))
     return () => {
-      document.removeEventListener("click", (e) => {
-        onOutSideClick(e, el);
-      });
-    };
-  }, [currentDialogId]);
+      document.removeEventListener('click', (e) => {
+        onOutSideClick(e, el)
+      })
+    }
+  }, [currentDialogId])
   if (!currentDialogId) {
-    return null;
+    return null
   }
   return (
     <ChatInputBase
@@ -237,16 +232,16 @@ const ChatInput: React.FC<Props> = ({
       onRecord={onRecord}
       isLoading={isLoading}
     />
-  );
-};
+  )
+}
 
 let mapStateToProps = (state: AppStateType): MapStatePropsType => {
   return {
     currentDialogId: state.dialogs.currentDialogId,
     attachments: state.attachments.items,
-    userId: state.user.data ? state.user.data._id : "",
-  };
-};
+    userId: state.user.data ? state.user.data._id : ''
+  }
+}
 
 export default connect<
   MapStatePropsType,
@@ -255,5 +250,5 @@ export default connect<
   AppStateType
 >(mapStateToProps, {
   setAttachments: attachmentsActions.setAttachments,
-  removeAttachment: attachmentsActions.removeAttachment,
-})(ChatInput);
+  removeAttachment: attachmentsActions.removeAttachment
+})(ChatInput)

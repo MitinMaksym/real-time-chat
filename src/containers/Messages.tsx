@@ -9,7 +9,6 @@ import { AppStateType } from '../redux/reduces'
 
 import { connect } from 'react-redux'
 import { Empty } from 'antd'
-import io from 'socket.io-client'
 import userSocket from '../core/socket'
 import { fetchMessages } from '../redux/actions/messages'
 

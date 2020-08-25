@@ -1,11 +1,11 @@
-import { UserDataType } from "./../../types/types";
-import React from "react";
-import createAvatarFromHash from "../../utils/helpers/createAvatarFromHash";
+import { UserDataType } from './../../types/types'
+import React from 'react'
+import createAvatarFromHash from '../../utils/helpers/createAvatarFromHash'
 
-import "./Avatar.scss";
+import './Avatar.scss'
 type Props = {
-  user: UserDataType;
-};
+  user: UserDataType
+}
 
 let Avatar: React.FC<Props> = ({ user }) => {
   if (user.avatar) {
@@ -15,10 +15,10 @@ let Avatar: React.FC<Props> = ({ user }) => {
         className="avatar"
         alt={`Avatar ${user.fullname}`}
       />
-    );
+    )
   } else {
-    const { color, colorLighten } = createAvatarFromHash(user._id);
-    const firstChar: string = user.fullname[0].toUpperCase();
+    const { color, colorLighten } = createAvatarFromHash(user._id)
+    const firstChar: string = user.fullname[0].toUpperCase()
     return (
       <div
         style={{
@@ -28,8 +28,8 @@ let Avatar: React.FC<Props> = ({ user }) => {
       >
         {firstChar}
       </div>
-    );
+    )
   }
-};
+}
 
-export default Avatar;
+export default React.memo(Avatar)

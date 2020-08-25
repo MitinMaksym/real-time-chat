@@ -1,34 +1,34 @@
-import React from "react";
+import React from 'react'
 
-import { Time, IconReaded } from "..";
-import isAudio from "../../utils/helpers/isAudio";
-import { Avatar } from "../";
-import { UserDataType, AttachmentServerType } from "../../types/types";
+import { Time, IconReaded } from '..'
+import isAudio from '../../utils/helpers/isAudio'
+import { Avatar } from '../'
+import { UserDataType, AttachmentServerType } from '../../types/types'
 
-import classNames from "classnames";
-import { Popover, Button } from "antd";
+import classNames from 'classnames'
+import { Popover, Button } from 'antd'
 
-import "./Message.scss";
-import MessageAudio from "../MessageAudio";
+import './Message.scss'
+import MessageAudio from '../MessageAudio'
 
-const Render = require("react-emoji-render");
-const Emoji = Render.Emojione;
+const Render = require('react-emoji-render')
+const Emoji = Render.Emojione
 
 type Props = {
-  id?: string;
-  key?: string;
-  alt?: string;
-  createdAt?: string;
-  text?: string;
-  user: UserDataType;
-  date?: Date;
-  isMe?: boolean;
-  attachments?: Array<AttachmentServerType>;
-  isTyping?: boolean;
-  readed?: boolean;
-  setImageUrl?: (url: string) => void;
-  onDeleteMessage?: (id: string) => void;
-};
+  id?: string
+  key?: string
+  alt?: string
+  createdAt?: string
+  text?: string
+  user: UserDataType
+  date?: Date
+  isMe?: boolean
+  attachments?: Array<AttachmentServerType>
+  isTyping?: boolean
+  readed?: boolean
+  setImageUrl?: (url: string) => void
+  onDeleteMessage?: (id: string) => void
+}
 const Message: React.FC<Props> = ({
   id,
   createdAt,
@@ -40,42 +40,40 @@ const Message: React.FC<Props> = ({
   isTyping,
   readed,
   setImageUrl,
-  onDeleteMessage,
+  onDeleteMessage
 }) => {
   const renderAttachment = (item: AttachmentServerType) => {
-    if (item.ext !== "webm") {
+    if (item.ext !== 'webm') {
       return (
         <div key={item._id} className="message__attachments-item">
           {item.url && (
             <img
-              src={item.url.replace(/http/, "https")}
+              src={item.url.replace(/http/, 'https')}
               alt={item.filename}
               onClick={() => {
-                if (item.url) onShowImage(item.url);
+                if (item.url) onShowImage(item.url)
               }}
             />
           )}
         </div>
-      );
+      )
     } else {
-      return (
-        <MessageAudio key={item._id} audioSrc={item.url ? item.url : ""} />
-      );
+      return <MessageAudio key={item._id} audioSrc={item.url ? item.url : ''} />
     }
-  };
+  }
 
   let onShowImage = (url: string) => {
     if (setImageUrl) {
-      setImageUrl(url);
+      setImageUrl(url)
     }
-  };
+  }
   return (
     <div
-      className={classNames("message", {
-        "message--isme": isMe,
-        "message--is-typing": isTyping,
-        "message--image": attachments && attachments.length === 1 && !text,
-        "message--is-audio": isAudio(attachments),
+      className={classNames('message', {
+        'message--isme': isMe,
+        'message--is-typing': isTyping,
+        'message--image': attachments && attachments.length === 1 && !text,
+        'message--is-audio': isAudio(attachments)
       })}
     >
       <div className="message__content">
@@ -90,7 +88,7 @@ const Message: React.FC<Props> = ({
                   <Button
                     onClick={(e) => {
                       if (onDeleteMessage && id) {
-                        onDeleteMessage(id);
+                        onDeleteMessage(id)
                       }
                     }}
                   >
@@ -108,7 +106,7 @@ const Message: React.FC<Props> = ({
           <Avatar user={user} />
         </div>
         <div className="message__info">
-          {" "}
+          {' '}
           {(isTyping || text) && (
             <div className="message__bubble">
               {text && <p className="message__text">{<Emoji text={text} />}</p>}
@@ -135,7 +133,7 @@ const Message: React.FC<Props> = ({
         </div>
       </div>
     </div>
-  );
-};
+  )
+}
 
-export default Message;
+export default Message

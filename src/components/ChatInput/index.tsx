@@ -1,37 +1,37 @@
-import React, { Fragment } from "react";
-import { Picker } from "emoji-mart";
-import "emoji-mart/css/emoji-mart.css";
+import React, { Fragment } from 'react'
+import { Picker } from 'emoji-mart'
+import 'emoji-mart/css/emoji-mart.css'
 //@ts-ignore
-import { UploadField } from "@navjobs/upload";
+import { UploadField } from '@navjobs/upload'
 
-import { UploadFiles } from "../";
-import { Button, Input, Icon } from "antd";
-import "./ChatInput.scss";
-import { AttachmentType } from "../../types/types";
+import { UploadFiles } from '../'
+import { Button, Input, Icon } from 'antd'
+import './ChatInput.scss'
+import { AttachmentType } from '../../types/types'
 
 type Props = {
-  value: string;
-  setValue: (value: string) => void;
-  attachments: Array<AttachmentType>;
-  emojiVisible: boolean;
-  isDisabled: boolean;
-  inputRef: (node: HTMLInputElement) => void;
-  isRecording: boolean;
-  isLoading: boolean;
+  value: string
+  setValue: (value: string) => void
+  attachments: Array<AttachmentType>
+  emojiVisible: boolean
+  isDisabled: boolean
+  inputRef: (node: HTMLInputElement) => void
+  isRecording: boolean
+  isLoading: boolean
 
-  toggleEmoji: () => void;
-  addEmoji: (emoji: any) => void;
-  selectFile: (files: FileList) => Promise<void>;
-  removeAttachment: (file: AttachmentType) => void;
+  toggleEmoji: () => void
+  addEmoji: (emoji: any) => void
+  selectFile: (files: FileList) => Promise<void>
+  removeAttachment: (file: AttachmentType) => void
   handleSendMessage: (
     e: React.KeyboardEvent<HTMLTextAreaElement> &
       React.MouseEvent<HTMLElement, MouseEvent>
-  ) => void;
-  onSendMessage: (e: React.MouseEvent<HTMLElement, MouseEvent>) => void;
-  onStopRecording: () => void;
-  onRecord: () => void;
-};
-const ChatInput: React.FC<Props> = props => {
+  ) => void
+  onSendMessage: (e: React.MouseEvent<HTMLElement, MouseEvent>) => void
+  onStopRecording: () => void
+  onRecord: () => void
+}
+const ChatInput: React.FC<Props> = (props) => {
   const {
     value,
     setValue,
@@ -49,8 +49,7 @@ const ChatInput: React.FC<Props> = props => {
     onStopRecording,
     onRecord,
     isLoading
-  } = props;
-
+  } = props
   return (
     <Fragment>
       <div ref={inputRef} className="chat-input">
@@ -82,10 +81,10 @@ const ChatInput: React.FC<Props> = props => {
           ) : (
             <Input.TextArea
               onChange={(e: React.ChangeEvent<HTMLTextAreaElement>) => {
-                let re = /^\s/;
-                let check = re.test(e.target.value);
+                let re = /^\s/
+                let check = re.test(e.target.value)
                 if (!check) {
-                  setValue(e.target.value);
+                  setValue(e.target.value)
                 }
               }}
               placeholder="Введите текст сообщения"
@@ -125,11 +124,11 @@ const ChatInput: React.FC<Props> = props => {
             <UploadField
               onFiles={selectFile}
               containerProps={{
-                className: "chat-input__actions-upload-btn"
+                className: 'chat-input__actions-upload-btn'
               }}
               uploadProps={{
-                accept: ".jpg,.jpeg,.png,.gif,.bmp",
-                multiple: "multiple"
+                accept: '.jpg,.jpeg,.png,.gif,.bmp',
+                multiple: 'multiple'
               }}
             >
               <Button type="link" shape="circle" icon="camera" />
@@ -144,7 +143,7 @@ const ChatInput: React.FC<Props> = props => {
         />
       </div>
     </Fragment>
-  );
-};
+  )
+}
 
-export default ChatInput;
+export default ChatInput

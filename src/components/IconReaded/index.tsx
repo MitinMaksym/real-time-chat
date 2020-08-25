@@ -1,14 +1,14 @@
-import React from "react";
+import React from 'react'
 
-import readedSvg from "../../assets/img/readed.svg";
-import noReadedSvg from "../../assets/img/noreaded.svg";
+import readedSvg from '../../assets/img/readed.svg'
+import noReadedSvg from '../../assets/img/noreaded.svg'
 
-import "./IconReaded.scss";
+import './IconReaded.scss'
 
 type Props = {
-  isMe: boolean;
-  isReaded: boolean;
-};
+  isMe: boolean
+  isReaded: boolean
+}
 const IconReaded: React.FC<Props> = ({ isMe, isReaded }) => {
   return (
     <div>
@@ -27,7 +27,7 @@ const IconReaded: React.FC<Props> = ({ isMe, isReaded }) => {
           />
         ))}
     </div>
-  );
-};
+  )
+}
 
-export default IconReaded;
+export default React.memo(IconReaded)

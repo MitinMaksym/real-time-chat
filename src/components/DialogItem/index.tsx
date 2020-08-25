@@ -1,24 +1,14 @@
 import React from 'react'
 import { IconReaded } from '..'
 import Avatar from '../Avatar'
+import { MessageType, UserDataType } from '../../types/types'
+import { getMessageTime } from '../../utils/helpers'
 
-import { Link } from 'react-router-dom'
-import { MessageType, UserDataType, DialogType } from '../../types/types'
 import classNames from 'classnames'
-import isToday from 'date-fns/isToday'
-
-import format from 'date-fns/format'
+import { Link } from 'react-router-dom'
 import { Icon } from 'antd'
 const Render = require('react-emoji-render')
 const Emoji = Render.Emojione
-
-const getMessageTime = (create_at: Date) => {
-  if (isToday(new Date(create_at))) {
-    return format(new Date(create_at), 'HH:mm')
-  } else {
-    return format(new Date(create_at), 'dd.MM.yyyy')
-  }
-}
 
 const renderLastMessage = (message: MessageType, userId: string) => {
   let text = ''
@@ -93,4 +83,4 @@ const DialogItem: React.FC<Props> = ({
   )
 }
 
-export default DialogItem
+export default React.memo(DialogItem)

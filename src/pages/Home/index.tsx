@@ -13,6 +13,8 @@ import { Status } from '../../components'
 type MapStatePropsType = {
   fullname: string
   userId: string
+  currentDialogId: string
+  dialogs: Array<DialogType>
 }
 
 type MapDispatchPropsType = {
@@ -30,8 +32,10 @@ const Home: React.FunctionComponent<Props> = (props) => {
     setCurrentDialog,
     setDialogsItems,
     setMessagesItems,
-
+    userId,
     fullname,
+    dialogs,
+    currentDialogId,
     signOut
   } = props
   let onSignOut = () => {
@@ -49,7 +53,7 @@ const Home: React.FunctionComponent<Props> = (props) => {
     return () => {
       props.history.push('/')
     }
-  }, [])
+  }, [props.history])
   useEffect(() => {
     let path = props.location.pathname
     let dialogId = path.split('/').pop()
@@ -58,6 +62,9 @@ const Home: React.FunctionComponent<Props> = (props) => {
     }
   }, [props.location.pathname, setCurrentDialog])
 
+  let currentDialogObj = dialogs.find((item: DialogType) => {
+    return item._id === currentDialogId
+  })
   return (
     <section className="home">
       <div className="chat">
@@ -65,9 +72,12 @@ const Home: React.FunctionComponent<Props> = (props) => {
         <div className="chat__dialog">
           <div className="chat__dialog-header">
             <div />
-            <Status />
+            <Status
+              userId={userId}
+              currentDialogId={currentDialogId}
+              currentDialogObj={currentDialogObj!}
+            />
             <div>
-              {' '}
               <Icon
                 style={{
                   fontSize: '20px',
@@ -91,9 +101,11 @@ const Home: React.FunctionComponent<Props> = (props) => {
 }
 export default withRouter(
   connect<MapStatePropsType, MapDispatchPropsType, OwnPropsType, AppStateType>(
-    ({ user }) => ({
+    ({ user, dialogs }) => ({
       fullname: user.data ? user.data.fullname : '',
-      userId: user.data ? user.data._id : ''
+      userId: user.data ? user.data._id : '',
+      currentDialogId: dialogs.currentDialogId,
+      dialogs: dialogs.items
     }),
     {
       setCurrentDialog: dialogsActions.setCurrentDialog,
